@@ -250,7 +250,7 @@
       </div>
     </div>
     <div class="pmo-toggle">
-      <button id="btnVMWaterfall" class="active">Waterfall (PMI)</button>
+      <button id="btnVMWaterfall" type="button" class="active">Waterfall (PMI)</button>
       <button id="btnVMAgile">Agile / Iterative</button>
     </div>
   </div>
