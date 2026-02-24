@@ -1,4 +1,4 @@
-<!-- PMO Methodology Visual Toggle Component (Blue + Red Version) -->
+<!-- PMO Methodology Visual Toggle Component (Blue + Purple, Iconic) -->
 <style>
   .pmo-visual-method-wrapper {
     max-width: 1100px;
@@ -55,7 +55,7 @@
     color: #fff;
   }
 
-  /* Visual track container (Waterfall default) */
+  /* Track container – Waterfall default (blue) */
   .pmo-track-container {
     position: relative;
     margin-top: 8px;
@@ -89,14 +89,15 @@
 
   .pmo-node {
     text-align: center;
-    max-width: 150px;
+    max-width: 160px;
     flex: 1 1 0;
     cursor: pointer;
+    outline: none;
   }
 
   .pmo-node-circle {
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
     margin: 0 auto 8px;
     border-radius: 50%;
     background: #ffffff;
@@ -104,12 +105,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
-    font-weight: 700;
-    color: #033161;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
     transition: transform 0.18s ease, box-shadow 0.18s ease,
       background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  }
+
+  .pmo-node-icon {
+    font-size: 26px;
+    line-height: 1;
   }
 
   .pmo-node-label {
@@ -125,7 +128,7 @@
     line-height: 1.3;
   }
 
-  /* Hover effect */
+  /* Hover & focus */
   .pmo-node:hover .pmo-node-circle,
   .pmo-node:focus .pmo-node-circle {
     transform: scale(1.12);
@@ -137,7 +140,7 @@
     outline-offset: 4px;
   }
 
-  /* Per-step WATERFALL colors */
+  /* WATERFALL (blue family, each step different) */
   .waterfall-track .pmo-node:nth-child(1) .pmo-node-circle {
     background: linear-gradient(135deg, #e5f0ff, #b6ceff);
     border-color: #385acb;
@@ -168,58 +171,52 @@
     background: linear-gradient(135deg, #ffffff, #9bb9ff);
   }
 
-  /* ------- NEW RED SCHEME FOR AGILE ------- */
-
-  /* Red gradient background for Agile mode */
+  /* AGILE: purple / magenta scheme with variation */
   .mode-agile .pmo-track-container {
-    background: linear-gradient(135deg, #fff3f3, #ffe0e0);
+    background: linear-gradient(135deg, #f9f2ff, #f1e2ff);
   }
 
-  /* Red central line */
   .mode-agile .pmo-track-background-line {
-    background: linear-gradient(90deg, #ff6b6b, #b30000);
-    opacity: 0.35;
+    background: linear-gradient(90deg, #c25bff, #6a1bb5);
+    opacity: 0.4;
   }
 
-  /* Base Agile circle border color */
   .mode-agile .pmo-node-circle {
-    border-color: #b30000;
-    color: #8b0000;
+    border-color: #7d1fb8;
+    color: #5b1385;
   }
 
-  /* Per-step agile variations */
   .agile-track .pmo-node:nth-child(1) .pmo-node-circle {
-    background: linear-gradient(135deg, #ffe8e8, #ffb3b3);
-    border-color: #cc4b4b;
-    color: #7a1e1e;
+    background: linear-gradient(135deg, #f7e8ff, #e0b8ff);
+    border-color: #8e30c8;
+    color: #551075;
   }
   .agile-track .pmo-node:nth-child(2) .pmo-node-circle {
-    background: linear-gradient(135deg, #ffe5e5, #ff9f9f);
-    border-color: #d63838;
-    color: #7a1414;
+    background: linear-gradient(135deg, #fbe5ff, #f0a8ff);
+    border-color: #b23acb;
+    color: #6f127c;
   }
   .agile-track .pmo-node:nth-child(3) .pmo-node-circle {
-    background: linear-gradient(135deg, #ffeaea, #ff8f8f);
-    border-color: #d12626;
-    color: #6e0b0b;
+    background: linear-gradient(135deg, #ffe6fb, #ffb0e5);
+    border-color: #c23aa7;
+    color: #7d155f;
   }
   .agile-track .pmo-node:nth-child(4) .pmo-node-circle {
-    background: linear-gradient(135deg, #fff0f0, #ffb8b8);
-    border-color: #c41f1f;
-    color: #821111;
+    background: linear-gradient(135deg, #ffeaf7, #ffbddf);
+    border-color: #cc4ba7;
+    color: #811d60;
   }
   .agile-track .pmo-node:nth-child(5) .pmo-node-circle {
-    background: linear-gradient(135deg, #fff6f6, #ffd1d1);
-    border-color: #b21212;
-    color: #780e0e;
+    background: linear-gradient(135deg, #fff0f8, #ffd0ef);
+    border-color: #b7328f;
+    color: #741650;
   }
 
   .agile-track .pmo-node:hover .pmo-node-circle {
-    background: linear-gradient(135deg, #ffffff, #ffbaba);
+    background: linear-gradient(135deg, #ffffff, #f3baf4);
   }
 
-  /* ---------------------------------------- */
-
+  /* Show/hide tracks by mode */
   .pmo-track.waterfall-track { display: flex; }
   .pmo-track.agile-track { display: none; }
 
@@ -247,9 +244,9 @@
   }
 
   .badge-agile {
-    background: #ffe3e3;
-    color: #b30000;
-    border: 1px solid #ffbaba;
+    background: #f8e8ff;
+    color: #7d1fb8;
+    border: 1px solid #e5c9ff;
   }
 
   .pmo-lessons-ribbon {
@@ -265,11 +262,47 @@
     gap: 8px;
   }
 
+  .pmo-lessons-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .pmo-lessons-text strong {
+    color: #033161;
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
-    .pmo-track { flex-direction: column; }
-    .pmo-track-background-line { display: none; }
-    .pmo-node { width: 100%; display: flex; text-align: left; gap: 12px; }
-    .pmo-node-circle { margin: 0; }
+    .pmo-visual-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .pmo-track {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pmo-track-background-line {
+      display: none;
+    }
+
+    .pmo-node {
+      max-width: none;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      gap: 10px;
+    }
+
+    .pmo-node-circle {
+      margin: 0;
+    }
+
+    .pmo-node-label {
+      font-size: 13px;
+    }
   }
 </style>
 
@@ -278,101 +311,149 @@
     <div>
       <div class="pmo-visual-title">Project Delivery Lifecycle</div>
       <div class="pmo-visual-subtitle" id="pmoVisualSubtitle">
-        Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle to
-        switch to Agile.
+        Viewing: <strong>Waterfall lifecycle</strong>. Use the toggle to switch to the Agile lifecycle.
       </div>
     </div>
-
     <div class="pmo-toggle">
-      <button id="btnVMWaterfall" type="button" class="active">Waterfall (PMI)</button>
-      <button id="btnVMAgile" type="button">Agile (Red)</button>
+      <button id="btnVMWaterfall" type="button" class="active">Waterfall</button>
+      <button id="btnVMAgile" type="button">Agile</button>
     </div>
   </div>
 
   <div class="pmo-track-container">
     <div class="pmo-track-background-line"></div>
 
-    <!-- WATERFALL TRACK -->
+    <!-- WATERFALL LIFECYCLE (traditional project cycle) -->
     <div class="pmo-track waterfall-track">
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">1</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">💡</span>
+        </div>
         <div class="pmo-node-label">Initiation</div>
-        <div class="pmo-node-subtitle">Define scope, sponsor, goals.</div>
+        <div class="pmo-node-subtitle">
+          Problem/opportunity defined, sponsor identified, high-level scope and objectives agreed.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">2</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">📝</span>
+        </div>
         <div class="pmo-node-label">Planning</div>
-        <div class="pmo-node-subtitle">Requirements, WBS, schedule.</div>
+        <div class="pmo-node-subtitle">
+          Requirements, schedule, budget, resources, risks, and governance plan developed.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">3</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">⚙️</span>
+        </div>
         <div class="pmo-node-label">Execution</div>
-        <div class="pmo-node-subtitle">Deliver project work packages.</div>
+        <div class="pmo-node-subtitle">
+          Project work performed to deliver the approved scope and products.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">4</div>
-        <div class="pmo-node-label">Monitoring</div>
-        <div class="pmo-node-subtitle">KPIs, change control, reporting.</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">📊</span>
+        </div>
+        <div class="pmo-node-label">Monitoring &amp; Controlling</div>
+        <div class="pmo-node-subtitle">
+          Performance tracked, variances analyzed, changes managed, and status reported.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">5</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">🏁</span>
+        </div>
         <div class="pmo-node-label">Closure</div>
-        <div class="pmo-node-subtitle">Handoff, acceptance, closeout.</div>
+        <div class="pmo-node-subtitle">
+          Formal acceptance, hand-off to operations, closeout, and end-of-project review.
+        </div>
       </div>
     </div>
 
-    <!-- AGILE TRACK (RED COLOR SCHEME) -->
+    <!-- AGILE LIFECYCLE (iterative cycle) -->
     <div class="pmo-track agile-track">
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">1</div>
-        <div class="pmo-node-label">Discovery</div>
-        <div class="pmo-node-subtitle">Vision, goals, stakeholders.</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">🧭</span>
+        </div>
+        <div class="pmo-node-label">Discovery &amp; Vision</div>
+        <div class="pmo-node-subtitle">
+          Product vision, outcomes, and high-level scope defined with key stakeholders.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">2</div>
-        <div class="pmo-node-label">Backlog</div>
-        <div class="pmo-node-subtitle">Prioritize work + plan iteration.</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">📋</span>
+        </div>
+        <div class="pmo-node-label">Backlog &amp; Planning</div>
+        <div class="pmo-node-subtitle">
+          Backlog created and prioritized; work sized and planned for upcoming iterations.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">3</div>
-        <div class="pmo-node-label">Sprint</div>
-        <div class="pmo-node-subtitle">Timeboxed delivery cycle.</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">🚀</span>
+        </div>
+        <div class="pmo-node-label">Iteration / Sprint</div>
+        <div class="pmo-node-subtitle">
+          Time-boxed development and testing cycles with daily stand-ups and collaboration.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">4</div>
-        <div class="pmo-node-label">Review</div>
-        <div class="pmo-node-subtitle">Demo and acceptance checks.</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">👀</span>
+        </div>
+        <div class="pmo-node-label">Review / Demo</div>
+        <div class="pmo-node-subtitle">
+          Working increments demonstrated and feedback captured against acceptance criteria.
+        </div>
       </div>
 
       <div class="pmo-node" tabindex="0" data-url="#">
-        <div class="pmo-node-circle">5</div>
+        <div class="pmo-node-circle">
+          <span class="pmo-node-icon" aria-hidden="true">🔁</span>
+        </div>
         <div class="pmo-node-label">Retrospective</div>
-        <div class="pmo-node-subtitle">Improve process for next cycle.</div>
+        <div class="pmo-node-subtitle">
+          Team reflects on process, identifies improvements, and feeds the next cycle.
+        </div>
       </div>
     </div>
   </div>
 
   <div class="pmo-legend">
-    <span class="badge badge-waterfall">Waterfall</span>
-    <span class="badge badge-agile">Agile</span>
-    <span>Steps correspond 1–1 across methodologies.</span>
+    <span class="badge badge-waterfall">Waterfall lifecycle</span>
+    <span class="badge badge-agile">Agile lifecycle</span>
+    <span>
+      Each methodology has its own cycle. Use the toggle to compare traditional
+      phase-based delivery with iterative, sprint-based delivery.
+    </span>
   </div>
 
   <div class="pmo-lessons-ribbon">
-    💡 <strong>Lessons Learned apply in both approaches</strong> — in Waterfall at project end, in Agile at every iteration.
+    <div class="pmo-lessons-icon">💡</div>
+    <div class="pmo-lessons-text">
+      <strong>Lessons Learned:</strong> In Waterfall, lessons are often captured during
+      project Closure. In Agile, they are captured in every Retrospective and rolled into
+      the next iteration. Link this panel to your Lessons Learned library or submission form.
+    </div>
   </div>
 </div>
 
 <script type="text/javascript">
   (function () {
     var wrapper = document.getElementById("pmoVisualMethod");
+    if (!wrapper) return;
+
     var btnWF = document.getElementById("btnVMWaterfall");
     var btnAg = document.getElementById("btnVMAgile");
     var subtitle = document.getElementById("pmoVisualSubtitle");
@@ -385,36 +466,61 @@
       if (mode === "waterfall") {
         btnWF.className = "active";
         btnAg.className = "";
-        subtitle.innerHTML =
-          'Viewing: <strong>Waterfall (PMI process groups)</strong>.';
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Waterfall lifecycle</strong>. Use the toggle to switch to the Agile lifecycle.';
+        }
       } else {
         btnWF.className = "";
         btnAg.className = "active";
-        subtitle.innerHTML =
-          'Viewing: <strong>Agile (Red color scheme)</strong>.';
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Agile lifecycle</strong>. Use the toggle to switch back to the Waterfall lifecycle.';
+        }
       }
     }
 
-    btnWF.onclick = function (e) { e.preventDefault(); setMode("waterfall"); };
-    btnAg.onclick = function (e) { e.preventDefault(); setMode("agile"); };
+    if (btnWF) {
+      btnWF.onclick = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        setMode("waterfall");
+      };
+    }
 
-    // Clickable nodes
+    if (btnAg) {
+      btnAg.onclick = function (e) {
+        if (e && e.preventDefault) e.preventDefault();
+        setMode("agile");
+      };
+    }
+
+    // Click / keyboard navigation on nodes
     var nodes = wrapper.querySelectorAll(".pmo-node");
-    nodes.forEach(function (node) {
-      node.onclick = function () {
-        var url = node.getAttribute("data-url");
-        if (url && url !== "#") window.location.href = url;
-      };
-
-      node.onkeydown = function (e) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
+    for (var i = 0; i < nodes.length; i++) {
+      (function (node) {
+        function go() {
           var url = node.getAttribute("data-url");
-          if (url && url !== "#") window.location.href = url;
+          if (url && url !== "#") {
+            window.location.href = url;
+          }
         }
-      };
-    });
 
-    setMode("waterfall"); // default
+        node.onclick = function () {
+          go();
+        };
+
+        node.onkeydown = function (e) {
+          e = e || window.event;
+          var key = e.key || e.keyCode;
+          if (key === "Enter" || key === " " || key === 13 || key === 32) {
+            if (e.preventDefault) e.preventDefault();
+            go();
+          }
+        };
+      })(nodes[i]);
+    }
+
+    // Default: show Waterfall
+    setMode("waterfall");
   })();
 </script>
