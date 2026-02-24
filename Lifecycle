@@ -55,13 +55,13 @@
     color: #fff;
   }
 
-  /* Visual track */
+  /* Visual track – base layout (shared by both methods) */
   .pmo-track-container {
     position: relative;
     margin-top: 8px;
     padding: 22px 16px 10px;
     border-radius: 12px;
-    background: linear-gradient(135deg, #f7f9fc, #eef2fa);
+    /* background is now mode-specific */
     overflow: hidden;
   }
 
@@ -72,7 +72,7 @@
     top: 50%;
     height: 6px;
     border-radius: 999px;
-    background: rgba(3, 49, 97, 0.16);
+    /* background is now mode-specific */
     z-index: 1;
   }
 
@@ -97,13 +97,13 @@
     margin: 0 auto 8px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #033161;
+    border: 3px solid transparent; /* color is mode-specific */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     font-weight: 700;
-    color: #033161;
+    color: inherit; /* color is mode-specific */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   }
 
@@ -119,12 +119,36 @@
     color: #555;
     line-height: 1.3;
   }
-  
-  input[type=button], input[type=reset], input[type=submit], button {
-	margin-left:0px;
-	}
 
-  /* Agile style variant (slightly different visual treatment) */
+  /* Prevent SharePoint buttons from shifting */
+  input[type=button],
+  input[type=reset],
+  input[type=submit],
+  button {
+    margin-left: 0px;
+  }
+
+  /* -------------------- MODE-SPECIFIC STYLES -------------------- */
+
+  /* Waterfall mode (blue) */
+  .mode-waterfall .pmo-track-container {
+    background: linear-gradient(135deg, #f7f9fc, #eef2fa);
+  }
+
+  .mode-waterfall .pmo-track-background-line {
+    background: rgba(3, 49, 97, 0.16);
+  }
+
+  .mode-waterfall .pmo-node-circle {
+    border-color: #033161;
+    color: #033161;
+  }
+
+  /* Agile style variant (green) */
+  .mode-agile .pmo-track-container {
+    background: linear-gradient(135deg, #f5fdf9, #e7f7f1);
+  }
+
   .mode-agile .pmo-track-background-line {
     background: linear-gradient(90deg, #0e7c7b, #1a9a5a);
   }
@@ -132,10 +156,6 @@
   .mode-agile .pmo-node-circle {
     border-color: #0e7c7b;
     color: #0e7c7b;
-  }
-
-  .mode-agile .pmo-track-container {
-    background: linear-gradient(135deg, #f5fdf9, #e7f7f1);
   }
 
   /* Hidden/visible tracks */
