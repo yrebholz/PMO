@@ -61,7 +61,7 @@
     margin-top: 8px;
     padding: 22px 16px 10px;
     border-radius: 12px;
-    /* background is now mode-specific */
+    /* background is mode-specific */
     overflow: hidden;
   }
 
@@ -72,7 +72,7 @@
     top: 50%;
     height: 6px;
     border-radius: 999px;
-    /* background is now mode-specific */
+    /* background is mode-specific */
     z-index: 1;
   }
 
@@ -85,10 +85,15 @@
     z-index: 2;
   }
 
+  /* Each node = flex column: icon + heading + text stacked identically
+     for BOTH Waterfall and Agile */
   .pmo-node {
-    text-align: center;
     max-width: 150px;
     flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   .pmo-node-circle {
