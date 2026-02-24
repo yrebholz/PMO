@@ -1,4 +1,4 @@
-<!-- PMO Lifecycle Visual + Step Tabs (Article Pages in /Pages library) -->
+<!-- PMO Lifecycle Visual + Step Tabs + Embedded Article Panel (/Pages library) -->
 
 <style>
   /* --- Shared page look from original --- */
@@ -262,18 +262,26 @@
 
   .pmo-tabs {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    width: 100%;
   }
 
   .pmo-tab {
-    padding: 6px 12px;
+    flex: 1 1 0;
+    text-align: center;
+    padding: 8px 6px;
     font-size: 13px;
-    border-radius: 6px;
-    border: 1px solid transparent;
+    border-radius: 0;
+    border: 1px solid #dde2ee;
+    border-right: none;
     background: #eef3fb;
     color: #0b3868;
     cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .pmo-tab:last-child {
+    border-right: 1px solid #dde2ee;
   }
 
   .pmo-tab:hover {
@@ -282,7 +290,7 @@
 
   .pmo-tab.active {
     background: #ffffff;
-    border-color: #2F528F;
+    border-bottom-color: #ffffff;
     color: #2F5597;
     font-weight: 600;
   }
@@ -302,6 +310,20 @@
 
   .mode-agile .tabs-agile {
     display: flex;
+  }
+
+  /* --- Embedded article panel --- */
+  .pmo-article-wrapper {
+    margin-top: 0;
+  }
+
+  .pmo-article-frame {
+    width: 100%;
+    min-height: 650px; /* adjust as needed */
+    border: 1px solid #dde2ee;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: #ffffff;
   }
 
   /* Responsive tweaks */
@@ -335,6 +357,16 @@
 
     .pmo-node-label {
       font-size: 13px;
+    }
+
+    .pmo-tabs {
+      flex-wrap: wrap;
+    }
+
+    .pmo-tab {
+      flex: 1 1 50%;
+      font-size: 12px;
+      padding: 6px 4px;
     }
   }
 </style>
@@ -468,6 +500,16 @@
         <button class="pmo-tab" data-step="4">Retrospective</button>
       </div>
     </div>
+
+    <!-- Embedded article area -->
+    <div class="pmo-article-wrapper">
+      <iframe
+        id="pmoArticleFrame"
+        class="pmo-article-frame"
+        title="Lifecycle Step Details"
+        src="about:blank"
+      ></iframe>
+    </div>
   </div>
 </div>
 
@@ -479,6 +521,7 @@
     var btnWF = document.getElementById("btnVMWaterfall");
     var btnAg = document.getElementById("btnVMAgile");
     var subtitle = document.getElementById("pmoVisualSubtitle");
+    var articleFrame = document.getElementById("pmoArticleFrame");
 
     var currentMode = "waterfall"; // "waterfall" or "agile"
     var currentStepIndex = 0;      // 0..4
@@ -532,7 +575,9 @@
       }
     }
 
-    function navigateToPage(stepIndex) {
+    function loadPageIntoFrame(stepIndex) {
+      if (!articleFrame) { return; }
+
       var pages = (currentMode === "agile") ? agilePages : waterfallPages;
       var fileName = pages[stepIndex];
       if (!fileName) { return; }
@@ -543,16 +588,15 @@
         baseUrl = baseUrl.replace(/\/$/, "");
       }
 
-      // Use Pages library (Article Pages)
       var targetUrl = baseUrl + "/Pages/" + fileName;
-      window.location.href = targetUrl;
+      articleFrame.src = targetUrl;
     }
 
-    function setActiveStep(stepIndex, shouldNavigate) {
+    function setActiveStep(stepIndex, shouldLoadPage) {
       currentStepIndex = stepIndex;
       updateActiveStepClasses();
-      if (shouldNavigate) {
-        navigateToPage(stepIndex);
+      if (shouldLoadPage) {
+        loadPageIntoFrame(stepIndex);
       }
     }
 
@@ -560,6 +604,9 @@
       currentMode = (mode === "agile") ? "agile" : "waterfall";
       wrapper.className = "pmo-visual-method-wrapper " +
         (currentMode === "agile" ? "mode-agile" : "mode-waterfall");
+
+      // Reset to first step when switching modes
+      currentStepIndex = 0;
 
       if(currentMode === "waterfall"){
         if (btnWF) { btnWF.classList.add("active"); }
@@ -577,8 +624,8 @@
         }
       }
 
-      // Once mode changes, re-sync which icon/tab is active
       updateActiveStepClasses();
+      loadPageIntoFrame(currentStepIndex);
     }
 
     // Toggle buttons
@@ -613,8 +660,9 @@
             if (e && e.preventDefault) e.preventDefault();
             if (currentMode !== "waterfall") {
               setMode("waterfall");
+            } else {
+              setActiveStep(idx, true);
             }
-            setActiveStep(idx, true);
           };
         })(wfNodes[i], i);
       }
@@ -629,15 +677,15 @@
             if (e && e.preventDefault) e.preventDefault();
             if (currentMode !== "agile") {
               setMode("agile");
+            } else {
+              setActiveStep(idx, true);
             }
-            setActiveStep(idx, true);
           };
         })(agNodes[i], i);
       }
     }
 
     // Default mode & step
-    setMode("waterfall");
-    setActiveStep(0, false);
+    setMode("waterfall");      // sets mode + stepIndex = 0 + loads Initiation
   })();
 </script>
