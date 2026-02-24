@@ -1,0 +1,23 @@
+<div class="methodology-toggle">
+  <button id="btnWaterfall" class="active">Waterfall</button>
+  <button id="btnAgile">Agile</button>
+</div>
+
+<div id="waterfallContent" class="methodology-section">…</div>
+<div id="agileContent" class="methodology-section" style="display:none;">…</div>
+
+<script>
+document.getElementById("btnWaterfall").onclick = function () {
+  document.getElementById("waterfallContent").style.display = "block";
+  document.getElementById("agileContent").style.display = "none";
+  this.classList.add("active");
+  document.getElementById("btnAgile").classList.remove("active");
+};
+
+document.getElementById("btnAgile").onclick = function () {
+  document.getElementById("waterfallContent").style.display = "none";
+  document.getElementById("agileContent").style.display = "block";
+  this.classList.add("active");
+  document.getElementById("btnWaterfall").classList.remove("active");
+};
+</script>
