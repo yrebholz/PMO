@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Acquisition Business Strategy Checklist</title>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+  <style>
+    body {
+      margin:0;
+      font-family: Helvetica, Arial, sans-serif;
+      background:#f0f2f5;
+    }
+    .checklist-page {
+      width:100%;
+      max-width:100%;
+      margin:0;
+      background:#f9f9f9;
+      padding:30px;
+      box-sizing:border-box;
+    }
+    h1 { margin:0 0 8px; color:#000; }
+    .custom-hr {
+      border:0;
+      border-top:5px solid #0078d4;
+      height:0;
+      margin:10px 0 20px;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin:10px 0 20px;
+    }
+    .smsubmit-button {
+      background:#2F5597;
+      color:#fff;
+      border:medium solid #2F528F;
+      border-radius:5px;
+      padding:10px 16px;
+      cursor:pointer;
+      font-size:14px;
+      line-height:20px;
+    }
+    .smsubmit-button:hover { filter: brightness(0.95); }
+
+    /* Cards grid */
+    .cards-grid {
+      display:grid;
+      grid-template-columns: repeat(3, minmax(300px, 1fr));
+      gap:20px;
+    }
+    @media (max-width:1200px){
+      .cards-grid { grid-template-columns: repeat(2, minmax(300px, 1fr)); }
+    }
+    @media (max-width:800px){
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Card */
+    .card {
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+    }
+    .card-header { display:flex; align-items:center; gap:12px; }
+    .card-header img.clipboard-image { width:44px; height:auto; }
+    .card-title { font-size:18px; margin:0; color:#000; }
+    .progress-pill {
+      margin-left:auto;
+      font-size:12px;
+      background:#eef3fb;
+      border:1px solid #c7d8f5;
+      padding:3px 8px;
+      border-radius:999px;
+      color:#0b3868;
+    }
+
+    /* Subitems */
+    .sublist { display:flex; flex-direction:column; gap:8px; }
+    .subrow { display:flex; align-items:center; gap:10px; }
+    .subrow input[type="checkbox"] { transform: scale(1.1); }
+    .subrow label { margin:0; font-size:14px; color:#000; cursor:pointer; }
+
+    /* Footer */
+    .card-footer { display:flex; justify-content:flex-end; }
+    .card-footer button {
+      border:none;
+      border-radius:6px;
+      padding:10px 14px;
+      font-size:14px;
+      background:#2F5597;
+      color:#fff;
+      display:none; /* hidden until complete */
+    }
+  </style>
+</head>
+<body>
+  <div class="checklist-page" aria-labelledby="pageTitle">
+    <h1 id="pageTitle">Acquisition Business Strategy Checklist</h1>
+    <hr class="custom-hr"/>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button id="clearAll" class="smsubmit-button" type="button">Clear All</button>
+      <button id="markAll" class="smsubmit-button" type="button">Mark All Complete</button>
+    </div>
+
+    <!-- Cards -->
+    <div id="cardsGrid" class="cards-grid" role="list"></div>
+  </div>
+
+  <script>
+    $(function () {
+      // Image assets (adjust paths if needed)
+      const IMG_ORIG  = "../SiteAssets/images/smallclipboard.png";
+      const IMG_CHECK = "../SiteAssets/images/checkedclipboard.gif";
+
+      // Content
+      const ITEMS = [
+        { id:"item1",  title:"Executive Summary", subs:[
+          "Brief overview of the acquisition",
+          "Purpose and scope of the strategy",
+          "High-level summary of the acquisition goals"
+        ]},
+        { id:"item2",  title:"Program Background & Objectives", subs:[
+          "Description of the program or system",
+          "Strategic alignment (mission, agency goals, etc.)",
+          "Key performance outcomes expected"
+        ]},
+        { id:"item3",  title:"Acquisition Approach", subs:[
+          "Type of acquisition (e.g., new procurement, follow-on, IDIQ, GWAC, OTA)",
+          "Phased delivery or single delivery",
+          "Agile/Incremental delivery strategy (if applicable)"
+        ]},
+        { id:"item4",  title:"Requirements Strategy", subs:[
+          "High-level description of what is being acquired",
+          "Type of requirement document planned (SOO, SOW, PWS)",
+          "Flexibility to industry innovation (e.g., use of SOO)"
+        ]},
+        { id:"item5",  title:"Contracting Strategy", subs:[
+          "Contract type(s) (e.g., FFP, T&M, CPFF, IDIQ)",
+          "Number of contracts (single award vs. multiple award)",
+          "Period of performance (base + options)",
+          "Small business or socioeconomic considerations"
+        ]},
+        { id:"item6",  title:"Competition Strategy", subs:[
+          "Approach to competition (full and open, set-aside, sole source, etc.)",
+          "Market research summary",
+          "Industry engagement plans (RFIs, industry days, draft RFPs)"
+        ]},
+        { id:"item7",  title:"Source Selection Strategy", subs:[
+          "Method of evaluation (LPTA, tradeoff, etc.)",
+          "Evaluation criteria (technical, past performance, price/cost, etc.)",
+          "Use of oral presentations or other innovations"
+        ]},
+        { id:"item8",  title:"Risk Management", subs:[
+          "Key risks (technical, schedule, cost, etc.)",
+          "Risk mitigation strategies",
+          "Risk-sharing considerations (e.g., contract incentives, CLIN structure)"
+        ]},
+        { id:"item9",  title:"Cost & Funding Strategy", subs:[
+          "Estimated contract value",
+          "Funding approach (single year, multi-year, incrementally funded)",
+          "Budget status and approvals"
+        ]},
+        { id:"item10", title:"Schedule & Milestones", subs:[
+          "Key acquisition milestones (e.g., RFP release, award date, IBR)",
+          "Planning activities and decision points",
+          "Integration with program milestones"
+        ]},
+        { id:"item11", title:"Governance & Oversight", subs:[
+          "Approval authorities (e.g., milestone decision authority)",
+          "Required reviews (e.g., APB, ASR, CDR)",
+          "Stakeholder coordination and roles"
+        ]},
+        { id:"item12", title:"Performance Metrics", subs:[
+          "How contract and program success will be measured",
+          "Metrics tied to mission or operational outcomes",
+          "Oversight mechanisms (e.g., CPARs, performance dashboards)"
+        ]},
+        { id:"item13", title:"Sustainment / Post-Award Considerations", subs:[
+          "Support strategy (e.g., contractor logistics support)",
+          "Transition planning (if incumbent exists)",
+          "Knowledge transfer / data rights"
+        ]},
+        { id:"item14", title:"Appendices (optional)", subs:[
+          "Market research report summary",
+          "Risk register",
+          "Acquisition milestone chart",
+          "Draft SOO/SOW/PWS (if applicable)"
+        ]}
+      ];
+
+      // Storage key helpers
+      const subKey  = (mainId, idx) => `chk:${mainId}:s${idx}`;
+      const mainKey = (mainId) => `main:${mainId}:complete`;
+
+      function getSubState(mainId){
+        const item = ITEMS.find(i => i.id===mainId);
+        const total = item ? item.subs.length : 0;
+        const checks = [];
+        for (let i=0;i<total;i++){
+          checks.push(!!localStorage.getItem(subKey(mainId, i)));
+        }
+        return checks;
+      }
+      function setMainComplete(mainId, isComplete){
+        if (isComplete) localStorage.setItem(mainKey(mainId), "1");
+        else localStorage.removeItem(mainKey(mainId));
+      }
+      function updatePill(mainId){
+        const states = getSubState(mainId);
+        const done = states.filter(Boolean).length;
+        $("#"+mainId+"-pill").text(`${done}/${states.length} complete`);
+      }
+      function syncCardUI(mainId){
+        const states = getSubState(mainId);
+        const done = states.filter(Boolean).length;
+        const total = states.length;
+        const $card = $("#"+mainId);
+        const $img  = $card.find(".clipboard-image");
+        const $btn  = $card.find(".complete-main");
+
+        if (done === total && total > 0){
+          setMainComplete(mainId, true);
+          $img.attr("src", IMG_CHECK).data("status","reviewed");
+          $btn.text("Completed").show();       // show when complete
+        } else {
+          setMainComplete(mainId, false);
+          $img.attr("src", IMG_ORIG).data("status","original");
+          $btn.hide();                         // hide when not complete
+        }
+        updatePill(mainId);
+      }
+
+      // Render cards
+      const $grid = $("#cardsGrid");
+      ITEMS.forEach(item => {
+        const subHtml = item.subs.map((label, i) => {
+          const checked = !!localStorage.getItem(subKey(item.id, i));
+          const chkId = `${item.id}-s${i}`;
+          return `
+            <div class="subrow">
+              <input type="checkbox" id="${chkId}" class="subbox" data-main="${item.id}" data-idx="${i}" ${checked?"checked":""}/>
+              <label for="${chkId}">${label}</label>
+            </div>
+          `;
+        }).join("");
+
+        const card = `
+          <div class="card" id="${item.id}">
+            <div class="card-header">
+              <img class="clipboard-image" src="${IMG_ORIG}" data-status="original" alt="" />
+              <h3 class="card-title">${item.title}</h3>
+              <span class="progress-pill" id="${item.id}-pill" aria-live="polite"></span>
+            </div>
+            <div class="sublist" role="group" aria-label="Subtasks for ${item.title}">
+              ${subHtml}
+            </div>
+            <div class="card-footer">
+              <button class="complete-main" type="button">Completed</button>
+            </div>
+          </div>
+        `;
+        $grid.append(card);
+        // sync from stored state after render
+        syncCardUI(item.id);
+      });
+
+      // Auto-complete: subitem toggles
+      $grid.on("change", ".subbox", function(){
+        const mainId = $(this).data("main");
+        const idx    = $(this).data("idx");
+
+        if (this.checked) localStorage.setItem(subKey(mainId, idx), "1");
+        else localStorage.removeItem(subKey(mainId, idx));
+
+        syncCardUI(mainId);
+      });
+
+      // Clear All
+      $("#clearAll").on("click", function(){
+        ITEMS.forEach(it=>{
+          for (let i=0;i<it.subs.length;i++) localStorage.removeItem(subKey(it.id, i));
+          setMainComplete(it.id, false);
+          const $card = $("#"+it.id);
+          $card.find(".subbox").prop("checked", false);
+          syncCardUI(it.id);
+        });
+      });
+
+      // Mark All Complete
+      $("#markAll").on("click", function(){
+        ITEMS.forEach(it=>{
+          for (let i=0;i<it.subs.length;i++) localStorage.setItem(subKey(it.id, i), "1");
+          setMainComplete(it.id, true);
+          const $card = $("#"+it.id);
+          $card.find(".subbox").prop("checked", true);
+          syncCardUI(it.id);
+        });
+      });
+
+      // The Completed button is purely informational; no click handler needed.
+    });
+  </script>
+</body>
+</html>
