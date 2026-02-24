@@ -1,371 +1,408 @@
-<!-- PMO Methodology Toggle Component -->
+<!-- PMO Methodology Visual Toggle Component -->
 <style>
-  .pmo-methodology-wrapper {
+  .pmo-visual-method-wrapper {
     max-width: 1100px;
     margin: 0 auto;
     font-family: "Segoe UI", Arial, sans-serif;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px 24px;
-    background-color: #fff;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #dde2ee;
+    padding: 22px 24px 26px;
+    box-sizing: border-box;
   }
 
-  .pmo-methodology-header {
+  .pmo-visual-header {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
     align-items: center;
-    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
   }
 
-  .pmo-methodology-title {
+  .pmo-visual-title {
     font-size: 20px;
     font-weight: 600;
-    color: #333;
+    color: #222;
   }
 
-  .methodology-toggle {
+  .pmo-visual-subtitle {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .pmo-toggle {
     display: inline-flex;
     border-radius: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #c3cadc;
     overflow: hidden;
+    background: #f5f6fa;
   }
 
-  .methodology-toggle button {
+  .pmo-toggle button {
     border: none;
     padding: 8px 16px;
-    cursor: pointer;
-    background: #f5f5f5;
-    color: #555;
     font-size: 13px;
+    cursor: pointer;
+    background: transparent;
+    color: #555;
     font-weight: 500;
     white-space: nowrap;
   }
 
-  .methodology-toggle button.active {
-    background: #033161; /* your navy / PMO brand color */
+  .pmo-toggle button.active {
+    background: #033161; /* PMO navy */
     color: #fff;
   }
 
-  .pmo-methodology-description {
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 16px;
-  }
-
-  /* Lifecycle visual */
-  .lifecycle-visual {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
-  .lifecycle-visual .phase-pill {
-    padding: 8px 12px;
-    border-radius: 20px;
-    border: 1px solid #033161;
-    font-size: 12px;
-    white-space: nowrap;
-    background-color: #f7f9fc;
-    color: #033161;
-  }
-
-  .lifecycle-visual .arrow {
-    font-size: 16px;
-    color: #999;
-  }
-
-  .lifecycle-visual.waterfall {
-    /* nothing special here; controlled via wrapper class */
-  }
-
-  .lifecycle-visual.agile {
-    display: none; /* shown when mode-agile is active */
-  }
-
-  /* Comparison table */
-  .methodology-comparison {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-    margin-bottom: 16px;
-  }
-
-  .methodology-comparison th,
-  .methodology-comparison td {
-    border: 1px solid #ddd;
-    padding: 6px 8px;
-    vertical-align: top;
-  }
-
-  .methodology-comparison th {
-    background-color: #f3f3f3;
-    font-weight: 600;
-    text-align: left;
-  }
-
-  .methodology-comparison td.phase-col {
-    width: 24%;
-    font-weight: 600;
-    background-color: #fafafa;
-  }
-
-  .methodology-comparison td.method-col {
-    width: 38%;
-  }
-
-  /* Highlighting based on selected mode */
-  .mode-waterfall .col-waterfall {
-    background-color: #e7f0ff;
-    border-color: #b6c8f0;
-    font-weight: 600;
-    color: #033161;
-  }
-
-  .mode-waterfall .col-agile {
-    color: #666;
-    background-color: #fff;
-  }
-
-  .mode-agile .col-agile {
-    background-color: #e7f0ff;
-    border-color: #b6c8f0;
-    font-weight: 600;
-    color: #033161;
-  }
-
-  .mode-agile .col-waterfall {
-    color: #666;
-    background-color: #fff;
-  }
-
-  /* Lessons Learned badge */
-  .lessons-banner {
+  /* Visual track */
+  .pmo-track-container {
+    position: relative;
     margin-top: 8px;
-    padding: 8px 10px;
-    background-color: #f7f9fc;
-    border-left: 4px solid #033161;
-    font-size: 12px;
-    color: #444;
+    padding: 22px 16px 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f7f9fc, #eef2fa);
+    overflow: hidden;
   }
 
-  .lessons-banner strong {
+  .pmo-track-background-line {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 50%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(3, 49, 97, 0.16);
+    z-index: 1;
+  }
+
+  .pmo-track {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 2;
+  }
+
+  .pmo-node {
+    text-align: center;
+    max-width: 150px;
+    flex: 1 1 0;
+  }
+
+  .pmo-node-circle {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 3px solid #033161;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #033161;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .pmo-node-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 4px;
+  }
+
+  .pmo-node-subtitle {
+    font-size: 11px;
+    color: #555;
+    line-height: 1.3;
+  }
+
+  /* Agile style variant (slightly different visual treatment) */
+  .mode-agile .pmo-track-background-line {
+    background: linear-gradient(90deg, #0e7c7b, #1a9a5a);
+  }
+
+  .mode-agile .pmo-node-circle {
+    border-color: #0e7c7b;
+    color: #0e7c7b;
+  }
+
+  .mode-agile .pmo-track-container {
+    background: linear-gradient(135deg, #f5fdf9, #e7f7f1);
+  }
+
+  /* Hidden/visible tracks */
+  .pmo-track.waterfall-track {
+    display: flex;
+  }
+
+  .pmo-track.agile-track {
+    display: none;
+  }
+
+  .mode-agile .waterfall-track {
+    display: none;
+  }
+
+  .mode-agile .agile-track {
+    display: flex;
+  }
+
+  /* Legend text */
+  .pmo-legend {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #555;
+  }
+
+  .pmo-legend strong {
+    color: #033161;
+  }
+
+  .pmo-legend span.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    margin-right: 6px;
+  }
+
+  .badge-waterfall {
+    background: #e7f0ff;
+    color: #033161;
+    border: 1px solid #c0cfee;
+  }
+
+  .badge-agile {
+    background: #e3f8ef;
+    color: #0e7c7b;
+    border: 1px solid #a9e4cf;
+  }
+
+  /* Lessons Learned ribbon */
+  .pmo-lessons-ribbon {
+    margin-top: 14px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #fff;
+    border: 1px dashed #c0cfee;
+    font-size: 11px;
+    color: #444;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pmo-lessons-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .pmo-lessons-text strong {
     color: #033161;
   }
 
   /* Responsive tweaks */
   @media (max-width: 768px) {
-    .pmo-methodology-header {
+    .pmo-visual-header {
       flex-direction: column;
       align-items: flex-start;
     }
 
-    .methodology-toggle {
+    .pmo-track {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pmo-track-background-line {
+      display: none;
+    }
+
+    .pmo-node {
+      max-width: none;
       width: 100%;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      gap: 10px;
     }
 
-    .methodology-toggle button {
-      flex: 1 1 50%;
-      text-align: center;
+    .pmo-node-circle {
+      margin: 0;
     }
 
-    .lifecycle-visual {
-      justify-content: flex-start;
-    }
-
-    .lifecycle-visual .phase-pill {
-      font-size: 11px;
+    .pmo-node-label {
+      font-size: 13px;
     }
   }
 </style>
 
-<div id="pmoMethodology" class="pmo-methodology-wrapper mode-waterfall">
-  <div class="pmo-methodology-header">
-    <div class="pmo-methodology-title">
-      Project Delivery Methodology
+<div id="pmoVisualMethod" class="pmo-visual-method-wrapper mode-waterfall">
+  <div class="pmo-visual-header">
+    <div>
+      <div class="pmo-visual-title">Project Delivery Lifecycle</div>
+      <div class="pmo-visual-subtitle" id="pmoVisualSubtitle">
+        Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle
+        to switch to the Agile / iterative view.
+      </div>
     </div>
-    <div class="methodology-toggle">
-      <button id="btnWaterfall" class="active">Waterfall (PMI)</button>
-      <button id="btnAgile">Agile / Iterative</button>
+    <div class="pmo-toggle">
+      <button id="btnVMWaterfall" class="active">Waterfall (PMI)</button>
+      <button id="btnVMAgile">Agile / Iterative</button>
     </div>
   </div>
 
-  <div class="pmo-methodology-description" id="pmoMethodologyText">
-    This view shows the <strong>Waterfall lifecycle</strong> based on PMI
-    process groups. Use the toggle to compare it with the Agile / iterative
-    lifecycle.
+  <div class="pmo-track-container">
+    <div class="pmo-track-background-line"></div>
+
+    <!-- WATERFALL TRACK -->
+    <div class="pmo-track waterfall-track">
+      <div class="pmo-node">
+        <div class="pmo-node-circle">1</div>
+        <div class="pmo-node-label">Initiation</div>
+        <div class="pmo-node-subtitle">
+          Define the problem or opportunity, sponsor, and high-level scope.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">2</div>
+        <div class="pmo-node-label">Planning</div>
+        <div class="pmo-node-subtitle">
+          Build the plan: requirements, schedule, risks, governance, and
+          communications.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">3</div>
+        <div class="pmo-node-label">Execution</div>
+        <div class="pmo-node-subtitle">
+          Deliver the approved scope, coordinate teams, and manage suppliers.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">4</div>
+        <div class="pmo-node-label">Monitoring &amp; Controlling</div>
+        <div class="pmo-node-subtitle">
+          Track progress, manage changes, escalate risks, and report status.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">5</div>
+        <div class="pmo-node-label">Closure</div>
+        <div class="pmo-node-subtitle">
+          Formal acceptance, hand-off to operations, and end-of-project
+          review.
+        </div>
+      </div>
+    </div>
+
+    <!-- AGILE TRACK -->
+    <div class="pmo-track agile-track">
+      <div class="pmo-node">
+        <div class="pmo-node-circle">1</div>
+        <div class="pmo-node-label">Discovery / Vision</div>
+        <div class="pmo-node-subtitle">
+          Clarify product vision, outcomes, stakeholders, and high-level scope.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">2</div>
+        <div class="pmo-node-label">Backlog &amp; Planning</div>
+        <div class="pmo-node-subtitle">
+          Build and refine a prioritized backlog and plan the next iteration.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">3</div>
+        <div class="pmo-node-label">Iteration / Sprint</div>
+        <div class="pmo-node-subtitle">
+          Timeboxed delivery with daily stand-ups and ongoing refinement.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">4</div>
+        <div class="pmo-node-label">Review / Acceptance</div>
+        <div class="pmo-node-subtitle">
+          Demonstrate working increments and confirm acceptance criteria.
+        </div>
+      </div>
+
+      <div class="pmo-node">
+        <div class="pmo-node-circle">5</div>
+        <div class="pmo-node-label">Retrospective</div>
+        <div class="pmo-node-subtitle">
+          Inspect ways of working, capture improvements, and feed the next
+          cycle.
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Lifecycle visual: Waterfall -->
-  <div class="lifecycle-visual waterfall">
-    <div class="phase-pill">Initiation</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Planning</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Execution</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Monitoring &amp; Controlling</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Closure</div>
+  <div class="pmo-legend">
+    <span class="badge badge-waterfall">Waterfall</span>
+    <span class="badge badge-agile">Agile</span>
+    <span>
+      Each numbered step aligns across both views (1 = Start/Vision, 2 =
+      Planning, 3 = Delivery, 4 = Validation, 5 = Close/Improve).
+    </span>
   </div>
 
-  <!-- Lifecycle visual: Agile -->
-  <div class="lifecycle-visual agile">
-    <div class="phase-pill">Discovery / Vision</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Backlog &amp; Planning</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Iteration / Sprint</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Review / Acceptance</div>
-    <div class="arrow">➔</div>
-    <div class="phase-pill">Retrospective</div>
-  </div>
-
-  <!-- Parallel comparison table -->
-  <table class="methodology-comparison">
-    <thead>
-      <tr>
-        <th class="phase-col">Lifecycle Stage</th>
-        <th class="method-col col-waterfall">Waterfall (PMI)</th>
-        <th class="method-col col-agile">Agile / Iterative</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="phase-col">Start / Vision</td>
-        <td class="method-col col-waterfall">
-          <strong>Initiation</strong><br />
-          Develop project charter, define high-level scope, identify
-          stakeholders, and seek approval to proceed.
-        </td>
-        <td class="method-col col-agile">
-          <strong>Discovery / Vision</strong><br />
-          Define product vision, outcomes, and high-level epics; assign Product
-          Owner and core team.
-        </td>
-      </tr>
-      <tr>
-        <td class="phase-col">Planning</td>
-        <td class="method-col col-waterfall">
-          <strong>Planning</strong><br />
-          Detailed requirements, WBS, schedule, RAID, governance checkpoints,
-          communication and quality plans.
-        </td>
-        <td class="method-col col-agile">
-          <strong>Backlog &amp; Iteration Planning</strong><br />
-          Build and prioritize backlog, refine user stories, estimate work,
-          plan the next iteration/sprint.
-        </td>
-      </tr>
-      <tr>
-        <td class="phase-col">Delivery</td>
-        <td class="method-col col-waterfall">
-          <strong>Execution</strong><br />
-          Deliver scope according to the approved plan; coordinate teams and
-          manage vendors and resources.
-        </td>
-        <td class="method-col col-agile">
-          <strong>Iteration / Sprint Execution</strong><br />
-          Timeboxed development cycles, daily standups, continuous refinement
-          of backlog and design.
-        </td>
-      </tr>
-      <tr>
-        <td class="phase-col">Control / Validation</td>
-        <td class="method-col col-waterfall">
-          <strong>Monitoring &amp; Controlling</strong><br />
-          Track performance, manage scope and change requests, escalate risks,
-          and report status against plan.
-        </td>
-        <td class="method-col col-agile">
-          <strong>Review / Acceptance</strong><br />
-          Sprint reviews and demos with stakeholders; validate increments
-          against acceptance criteria.
-        </td>
-      </tr>
-      <tr>
-        <td class="phase-col">Close / Improve</td>
-        <td class="method-col col-waterfall">
-          <strong>Closure</strong><br />
-          Formal acceptance, closeout documentation, operational handoff, and
-          end-of-project lessons learned.
-        </td>
-        <td class="method-col col-agile">
-          <strong>Retrospective</strong><br />
-          Inspect ways of working, capture improvements, update practices and
-          backlog for the next iteration.
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="lessons-banner">
-    <strong>Lessons Learned:</strong>
-    Captured for both methodologies in a shared repository. For Waterfall,
-    lessons are typically recorded at project close. For Agile, they are
-    captured at the end of each iteration and rolled into continuous
-    improvement.
+  <div class="pmo-lessons-ribbon">
+    <div class="pmo-lessons-icon">💡</div>
+    <div class="pmo-lessons-text">
+      <strong>Lessons Learned apply to both lifecycles.</strong> In Waterfall,
+      they are captured during project Closure. In Agile, they are captured
+      every Retrospective and rolled into continuous improvement. Link this
+      panel to your Lessons Learned library or submission form.
+    </div>
   </div>
 </div>
 
 <script type="text/javascript">
   (function () {
-    var wrapper = document.getElementById("pmoMethodology");
+    var wrapper = document.getElementById("pmoVisualMethod");
     if (!wrapper) return;
 
-    var btnWaterfall = document.getElementById("btnWaterfall");
-    var btnAgile = document.getElementById("btnAgile");
-    var desc = document.getElementById("pmoMethodologyText");
+    var btnWF = document.getElementById("btnVMWaterfall");
+    var btnAg = document.getElementById("btnVMAgile");
+    var subtitle = document.getElementById("pmoVisualSubtitle");
 
-    var waterfallVisual = wrapper.querySelector(".lifecycle-visual.waterfall");
-    var agileVisual = wrapper.querySelector(".lifecycle-visual.agile");
+    function setMode(mode) {
+      // reset mode classes
+      var baseClass = "pmo-visual-method-wrapper";
+      wrapper.className = baseClass + (mode === "agile" ? " mode-agile" : " mode-waterfall");
 
-    function showWaterfall() {
-      wrapper.className = wrapper.className
-        .replace("mode-agile", "")
-        .replace("mode-waterfall", "")
-        .trim() + " mode-waterfall";
-
-      btnWaterfall.className = "active";
-      btnAgile.className = "";
-
-      if (waterfallVisual) waterfallVisual.style.display = "flex";
-      if (agileVisual) agileVisual.style.display = "none";
-
-      if (desc) {
-        desc.innerHTML =
-          'This view shows the <strong>Waterfall lifecycle</strong> based on PMI ' +
-          "process groups. Use the toggle to compare it with the Agile / iterative lifecycle.";
+      if (mode === "waterfall") {
+        btnWF.className = "active";
+        btnAg.className = "";
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle to switch to the Agile / iterative view.';
+        }
+      } else {
+        btnWF.className = "";
+        btnAg.className = "active";
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Agile / iterative lifecycle</strong>. Use the toggle to switch back to the Waterfall (PMI) view.';
+        }
       }
     }
 
-    function showAgile() {
-      wrapper.className = wrapper.className
-        .replace("mode-waterfall", "")
-        .replace("mode-agile", "")
-        .trim() + " mode-agile";
+    if (btnWF) btnWF.onclick = function () { setMode("waterfall"); };
+    if (btnAg) btnAg.onclick = function () { setMode("agile"); };
 
-      btnWaterfall.className = "";
-      btnAgile.className = "active";
-
-      if (waterfallVisual) waterfallVisual.style.display = "none";
-      if (agileVisual) agileVisual.style.display = "flex";
-
-      if (desc) {
-        desc.innerHTML =
-          'This view shows the <strong>Agile / iterative lifecycle</strong>. ' +
-          "Use the toggle to compare it with the Waterfall PMI process groups.";
-      }
-    }
-
-    if (btnWaterfall) btnWaterfall.onclick = showWaterfall;
-    if (btnAgile) btnAgile.onclick = showAgile;
-
-    // Ensure default state is Waterfall
-    showWaterfall();
+    // Default state
+    setMode("waterfall");
   })();
 </script>
