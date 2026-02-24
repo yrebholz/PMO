@@ -399,8 +399,15 @@
       }
     }
 
-    if (btnWF) btnWF.onclick = function () { setMode("waterfall"); };
-    if (btnAg) btnAg.onclick = function () { setMode("agile"); };
+if (btnWF) btnWF.onclick = function (e) {
+  if (e && e.preventDefault) e.preventDefault();
+  setMode("waterfall");
+};
+
+if (btnAg) btnAg.onclick = function (e) {
+  if (e && e.preventDefault) e.preventDefault();
+  setMode("agile");
+};
 
     // Default state
     setMode("waterfall");
