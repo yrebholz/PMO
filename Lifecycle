@@ -1,4 +1,4 @@
-<!-- PMO Lifecycle Visual (with header + button styling from original page) -->
+<!-- PMO Lifecycle Visual + Step Tabs (Article Pages in /Pages library) -->
 
 <style>
   /* --- Shared page look from original --- */
@@ -61,7 +61,7 @@
     color: #555;
   }
 
-  /* --- Toggle buttons using your original button look --- */
+  /* --- Toggle buttons using original button look --- */
   .pmo-toggle {
     display: inline-flex;
     border-radius: 6px;
@@ -145,7 +145,14 @@
     font-size: 34px;
   }
 
-  .pmo-node:hover .pmo-node-circle {
+  /* Hover: enlarge if NOT already active */
+  .pmo-node:not(.active-step):hover .pmo-node-circle {
+    transform: scale(1.10);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+  }
+
+  /* Selected step: stays large even when not hovering */
+  .pmo-node.active-step .pmo-node-circle {
     transform: scale(1.10);
     box-shadow: 0 4px 12px rgba(0,0,0,0.22);
   }
@@ -225,7 +232,7 @@
     border-color:#b7328f; color:#741650;
   }
 
-  /* --------- VISIBILITY RULES (fix: only one track at a time) --------- */
+  /* --------- VISIBILITY RULES (only one track at a time) --------- */
   .pmo-track.waterfall-track {
     display: flex;
   }
@@ -241,10 +248,61 @@
   .mode-agile .agile-track {
     display: flex;
   }
-  
+
   input[type=button], input[type=reset], input[type=submit], button {
-	margin-left:0px;
-	}
+    margin-left:0px;
+  }
+
+  /* --- Tabs under the lifecycle --- */
+  .pmo-tabs-container {
+    margin-top: 18px;
+    padding-top: 10px;
+    border-top: 1px solid #dde2ee;
+  }
+
+  .pmo-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pmo-tab {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    background: #eef3fb;
+    color: #0b3868;
+    cursor: pointer;
+  }
+
+  .pmo-tab:hover {
+    filter: brightness(0.96);
+  }
+
+  .pmo-tab.active {
+    background: #ffffff;
+    border-color: #2F528F;
+    color: #2F5597;
+    font-weight: 600;
+  }
+
+  /* Waterfall tabs shown by default, Agile hidden unless mode-agile */
+  .tabs-waterfall {
+    display: flex;
+  }
+
+  .tabs-agile {
+    display: none;
+  }
+
+  .mode-agile .tabs-waterfall {
+    display: none;
+  }
+
+  .mode-agile .tabs-agile {
+    display: flex;
+  }
 
   /* Responsive tweaks */
   @media (max-width: 768px) {
@@ -389,36 +447,197 @@
         </div>
       </div>
     </div>
+
+    <!-- Tabs under lifecycle -->
+    <div class="pmo-tabs-container">
+      <!-- Waterfall tabs -->
+      <div class="pmo-tabs tabs-waterfall">
+        <button class="pmo-tab active" data-step="0">Initiation</button>
+        <button class="pmo-tab" data-step="1">Planning</button>
+        <button class="pmo-tab" data-step="2">Execution</button>
+        <button class="pmo-tab" data-step="3">Monitoring &amp; Controlling</button>
+        <button class="pmo-tab" data-step="4">Closure</button>
+      </div>
+
+      <!-- Agile tabs -->
+      <div class="pmo-tabs tabs-agile">
+        <button class="pmo-tab active" data-step="0">Discovery / Vision</button>
+        <button class="pmo-tab" data-step="1">Backlog &amp; Planning</button>
+        <button class="pmo-tab" data-step="2">Iteration / Sprint</button>
+        <button class="pmo-tab" data-step="3">Review / Acceptance</button>
+        <button class="pmo-tab" data-step="4">Retrospective</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
   (function(){
     var wrapper = document.getElementById("pmoVisualMethod");
+    if (!wrapper) { return; }
+
     var btnWF = document.getElementById("btnVMWaterfall");
     var btnAg = document.getElementById("btnVMAgile");
     var subtitle = document.getElementById("pmoVisualSubtitle");
 
-    function setMode(mode){
-      wrapper.className = "pmo-visual-method-wrapper " + (mode === "agile" ? "mode-agile" : "mode-waterfall");
+    var currentMode = "waterfall"; // "waterfall" or "agile"
+    var currentStepIndex = 0;      // 0..4
 
-      if(mode === "waterfall"){
-        btnWF.classList.add("active");
-        btnAg.classList.remove("active");
-        subtitle.innerHTML =
-          'Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle to switch to the Agile / iterative view.';
-      } else {
-        btnWF.classList.remove("active");
-        btnAg.classList.add("active");
-        subtitle.innerHTML =
-          'Viewing: <strong>Agile / iterative lifecycle</strong>. Use the toggle to switch back to the Waterfall (PMI) view.';
+    // Page mappings (Article Pages in /Pages library)
+    var waterfallPages = [
+      "Waterfall-Initiation.aspx",
+      "Waterfall-Planning.aspx",
+      "Waterfall-Execution.aspx",
+      "Waterfall-MonitoringControlling.aspx",
+      "Waterfall-Closure.aspx"
+    ];
+
+    var agilePages = [
+      "Agile-DiscoveryVision.aspx",
+      "Agile-BacklogPlanning.aspx",
+      "Agile-IterationSprint.aspx",
+      "Agile-ReviewAcceptance.aspx",
+      "Agile-Retrospective.aspx"
+    ];
+
+    function updateActiveStepClasses() {
+      var i;
+      // Clear active-step from all nodes
+      var allNodes = wrapper.querySelectorAll(".pmo-node");
+      for (i = 0; i < allNodes.length; i++) {
+        allNodes[i].className = allNodes[i].className.replace(/\s*active-step/g, "");
+      }
+
+      // Add active-step to the node in the current track
+      var trackSelector = (currentMode === "agile") ? ".agile-track" : ".waterfall-track";
+      var track = wrapper.querySelector(trackSelector);
+      if (track) {
+        var stepNodes = track.querySelectorAll(".pmo-node");
+        if (stepNodes[currentStepIndex]) {
+          stepNodes[currentStepIndex].className += " active-step";
+        }
+      }
+
+      // Clear active from all tabs
+      var allTabs = wrapper.querySelectorAll(".pmo-tab");
+      for (i = 0; i < allTabs.length; i++) {
+        allTabs[i].className = allTabs[i].className.replace(/\s*active\b/, "");
+      }
+
+      // Set active on current mode's tabs
+      var tabsSelector = (currentMode === "agile") ? ".tabs-agile .pmo-tab" : ".tabs-waterfall .pmo-tab";
+      var tabs = wrapper.querySelectorAll(tabsSelector);
+      if (tabs[currentStepIndex]) {
+        tabs[currentStepIndex].className += " active";
       }
     }
 
-    btnWF.onclick = function(e){ if(e && e.preventDefault) e.preventDefault(); setMode("waterfall"); };
-    btnAg.onclick = function(e){ if(e && e.preventDefault) e.preventDefault(); setMode("agile"); };
+    function navigateToPage(stepIndex) {
+      var pages = (currentMode === "agile") ? agilePages : waterfallPages;
+      var fileName = pages[stepIndex];
+      if (!fileName) { return; }
 
-    // Default mode
+      // Build URL using SharePoint context if available
+      var baseUrl = (window._spPageContextInfo && _spPageContextInfo.webServerRelativeUrl) || "";
+      if (baseUrl && baseUrl.length > 1) {
+        baseUrl = baseUrl.replace(/\/$/, "");
+      }
+
+      // Use Pages library (Article Pages)
+      var targetUrl = baseUrl + "/Pages/" + fileName;
+      window.location.href = targetUrl;
+    }
+
+    function setActiveStep(stepIndex, shouldNavigate) {
+      currentStepIndex = stepIndex;
+      updateActiveStepClasses();
+      if (shouldNavigate) {
+        navigateToPage(stepIndex);
+      }
+    }
+
+    function setMode(mode){
+      currentMode = (mode === "agile") ? "agile" : "waterfall";
+      wrapper.className = "pmo-visual-method-wrapper " +
+        (currentMode === "agile" ? "mode-agile" : "mode-waterfall");
+
+      if(currentMode === "waterfall"){
+        if (btnWF) { btnWF.classList.add("active"); }
+        if (btnAg) { btnAg.classList.remove("active"); }
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle to switch to the Agile / iterative view.';
+        }
+      } else {
+        if (btnWF) { btnWF.classList.remove("active"); }
+        if (btnAg) { btnAg.classList.add("active"); }
+        if (subtitle) {
+          subtitle.innerHTML =
+            'Viewing: <strong>Agile / iterative lifecycle</strong>. Use the toggle to switch back to the Waterfall (PMI) view.';
+        }
+      }
+
+      // Once mode changes, re-sync which icon/tab is active
+      updateActiveStepClasses();
+    }
+
+    // Toggle buttons
+    if (btnWF) {
+      btnWF.onclick = function(e){ if(e && e.preventDefault) e.preventDefault(); setMode("waterfall"); };
+    }
+    if (btnAg) {
+      btnAg.onclick = function(e){ if(e && e.preventDefault) e.preventDefault(); setMode("agile"); };
+    }
+
+    // Tab clicks
+    var tabButtons = wrapper.querySelectorAll(".pmo-tab");
+    var i;
+    for (i = 0; i < tabButtons.length; i++) {
+      (function(btn){
+        btn.onclick = function(e){
+          if (e && e.preventDefault) { e.preventDefault(); }
+          var step = parseInt(btn.getAttribute("data-step"), 10);
+          if (isNaN(step)) { return; }
+          setActiveStep(step, true);
+        };
+      })(tabButtons[i]);
+    }
+
+    // Node (icon) clicks
+    var waterfallTrack = wrapper.querySelector(".waterfall-track");
+    if (waterfallTrack) {
+      var wfNodes = waterfallTrack.querySelectorAll(".pmo-node");
+      for (i = 0; i < wfNodes.length; i++) {
+        (function(node, idx){
+          node.onclick = function(e){
+            if (e && e.preventDefault) e.preventDefault();
+            if (currentMode !== "waterfall") {
+              setMode("waterfall");
+            }
+            setActiveStep(idx, true);
+          };
+        })(wfNodes[i], i);
+      }
+    }
+
+    var agileTrack = wrapper.querySelector(".agile-track");
+    if (agileTrack) {
+      var agNodes = agileTrack.querySelectorAll(".pmo-node");
+      for (i = 0; i < agNodes.length; i++) {
+        (function(node, idx){
+          node.onclick = function(e){
+            if (e && e.preventDefault) e.preventDefault();
+            if (currentMode !== "agile") {
+              setMode("agile");
+            }
+            setActiveStep(idx, true);
+          };
+        })(agNodes[i], i);
+      }
+    }
+
+    // Default mode & step
     setMode("waterfall");
+    setActiveStep(0, false);
   })();
 </script>
