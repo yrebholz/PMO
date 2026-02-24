@@ -1,13 +1,13 @@
-<!-- PMO Methodology Visual Toggle Component (Blue + Purple, Iconic) -->
+<!-- PMO Methodology Visual Toggle Component (Blue + Purple, Larger Icons) -->
 <style>
   .pmo-visual-method-wrapper {
-    max-width: 1100px;
+    max-width: 1200px; /* slightly wider to give icons space */
     margin: 0 auto;
     font-family: "Segoe UI", Arial, sans-serif;
     background: #ffffff;
     border-radius: 10px;
     border: 1px solid #dde2ee;
-    padding: 22px 24px 26px;
+    padding: 24px 28px 28px;
     box-sizing: border-box;
   }
 
@@ -21,7 +21,7 @@
   }
 
   .pmo-visual-title {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     color: #222;
   }
@@ -58,8 +58,8 @@
   /* Track container – Waterfall default (blue) */
   .pmo-track-container {
     position: relative;
-    margin-top: 8px;
-    padding: 24px 16px 14px;
+    margin-top: 10px;
+    padding: 30px 20px 18px;
     border-radius: 12px;
     background: linear-gradient(135deg, #f2f5ff, #e4ebff);
     overflow: hidden;
@@ -68,10 +68,10 @@
 
   .pmo-track-background-line {
     position: absolute;
-    left: 6%;
-    right: 6%;
+    left: 8%;
+    right: 8%;
     top: 50%;
-    height: 7px;
+    height: 8px;
     border-radius: 999px;
     background: linear-gradient(90deg, #5a7bcf, #033161);
     opacity: 0.35;
@@ -83,56 +83,56 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 12px;
+    gap: 18px;
     z-index: 2;
   }
 
   .pmo-node {
     text-align: center;
-    max-width: 160px;
+    max-width: 200px;
     flex: 1 1 0;
     cursor: pointer;
     outline: none;
   }
 
   .pmo-node-circle {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 8px;
+    width: 80px;   /* BIGGER */
+    height: 80px;  /* BIGGER */
+    margin: 0 auto 10px;
     border-radius: 50%;
     background: #ffffff;
-    border: 3px solid #033161;
+    border: 4px solid #033161;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     transition: transform 0.18s ease, box-shadow 0.18s ease,
       background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
   }
 
   .pmo-node-icon {
-    font-size: 26px;
+    font-size: 34px; /* BIGGER */
     line-height: 1;
   }
 
   .pmo-node-label {
-    font-size: 13px;
+    font-size: 14px; /* slightly larger */
     font-weight: 600;
     color: #20252e;
     margin-bottom: 4px;
   }
 
   .pmo-node-subtitle {
-    font-size: 11px;
+    font-size: 12px;
     color: #4a4f5c;
-    line-height: 1.3;
+    line-height: 1.4;
   }
 
   /* Hover & focus */
   .pmo-node:hover .pmo-node-circle,
   .pmo-node:focus .pmo-node-circle {
     transform: scale(1.12);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
   }
 
   .pmo-node:focus {
@@ -224,7 +224,7 @@
   .mode-agile .agile-track { display: flex; }
 
   .pmo-legend {
-    margin-top: 10px;
+    margin-top: 12px;
     font-size: 11px;
     color: #555;
   }
@@ -293,7 +293,7 @@
       display: flex;
       align-items: center;
       text-align: left;
-      gap: 10px;
+      gap: 14px;
     }
 
     .pmo-node-circle {
@@ -301,7 +301,7 @@
     }
 
     .pmo-node-label {
-      font-size: 13px;
+      font-size: 14px;
     }
   }
 </style>
@@ -323,7 +323,7 @@
   <div class="pmo-track-container">
     <div class="pmo-track-background-line"></div>
 
-    <!-- WATERFALL LIFECYCLE (traditional project cycle) -->
+    <!-- WATERFALL LIFECYCLE -->
     <div class="pmo-track waterfall-track">
       <div class="pmo-node" tabindex="0" data-url="#">
         <div class="pmo-node-circle">
@@ -331,7 +331,7 @@
         </div>
         <div class="pmo-node-label">Initiation</div>
         <div class="pmo-node-subtitle">
-          Problem/opportunity defined, sponsor identified, high-level scope and objectives agreed.
+          Define the problem or opportunity, identify sponsor, agree on high-level scope.
         </div>
       </div>
 
@@ -341,7 +341,7 @@
         </div>
         <div class="pmo-node-label">Planning</div>
         <div class="pmo-node-subtitle">
-          Requirements, schedule, budget, resources, risks, and governance plan developed.
+          Develop requirements, schedule, budget, resources, risk and governance plans.
         </div>
       </div>
 
@@ -351,7 +351,7 @@
         </div>
         <div class="pmo-node-label">Execution</div>
         <div class="pmo-node-subtitle">
-          Project work performed to deliver the approved scope and products.
+          Perform project work to deliver the approved scope and outputs.
         </div>
       </div>
 
@@ -361,7 +361,7 @@
         </div>
         <div class="pmo-node-label">Monitoring &amp; Controlling</div>
         <div class="pmo-node-subtitle">
-          Performance tracked, variances analyzed, changes managed, and status reported.
+          Track performance, manage changes, escalate risks, and report status.
         </div>
       </div>
 
@@ -371,12 +371,12 @@
         </div>
         <div class="pmo-node-label">Closure</div>
         <div class="pmo-node-subtitle">
-          Formal acceptance, hand-off to operations, closeout, and end-of-project review.
+          Transition to operations, obtain formal acceptance, and complete closeout.
         </div>
       </div>
     </div>
 
-    <!-- AGILE LIFECYCLE (iterative cycle) -->
+    <!-- AGILE LIFECYCLE -->
     <div class="pmo-track agile-track">
       <div class="pmo-node" tabindex="0" data-url="#">
         <div class="pmo-node-circle">
@@ -384,7 +384,7 @@
         </div>
         <div class="pmo-node-label">Discovery &amp; Vision</div>
         <div class="pmo-node-subtitle">
-          Product vision, outcomes, and high-level scope defined with key stakeholders.
+          Clarify product vision, value, and high-level scope with stakeholders.
         </div>
       </div>
 
@@ -394,7 +394,7 @@
         </div>
         <div class="pmo-node-label">Backlog &amp; Planning</div>
         <div class="pmo-node-subtitle">
-          Backlog created and prioritized; work sized and planned for upcoming iterations.
+          Build and prioritize backlog, refine stories, and plan upcoming iterations.
         </div>
       </div>
 
@@ -404,7 +404,7 @@
         </div>
         <div class="pmo-node-label">Iteration / Sprint</div>
         <div class="pmo-node-subtitle">
-          Time-boxed development and testing cycles with daily stand-ups and collaboration.
+          Time-boxed delivery, daily collaboration, and continuous refinement.
         </div>
       </div>
 
@@ -414,7 +414,7 @@
         </div>
         <div class="pmo-node-label">Review / Demo</div>
         <div class="pmo-node-subtitle">
-          Working increments demonstrated and feedback captured against acceptance criteria.
+          Demonstrate working increments, gather feedback, confirm acceptance.
         </div>
       </div>
 
@@ -424,7 +424,7 @@
         </div>
         <div class="pmo-node-label">Retrospective</div>
         <div class="pmo-node-subtitle">
-          Team reflects on process, identifies improvements, and feeds the next cycle.
+          Inspect ways of working, capture improvements, and feed the next cycle.
         </div>
       </div>
     </div>
@@ -434,17 +434,17 @@
     <span class="badge badge-waterfall">Waterfall lifecycle</span>
     <span class="badge badge-agile">Agile lifecycle</span>
     <span>
-      Each methodology has its own cycle. Use the toggle to compare traditional
-      phase-based delivery with iterative, sprint-based delivery.
+      Each methodology has its own cycle. Use the toggle to switch between a
+      phase-based view and an iterative view.
     </span>
   </div>
 
   <div class="pmo-lessons-ribbon">
     <div class="pmo-lessons-icon">💡</div>
     <div class="pmo-lessons-text">
-      <strong>Lessons Learned:</strong> In Waterfall, lessons are often captured during
-      project Closure. In Agile, they are captured in every Retrospective and rolled into
-      the next iteration. Link this panel to your Lessons Learned library or submission form.
+      <strong>Lessons Learned:</strong> In Waterfall, lessons are typically captured during
+      Closure. In Agile, they are captured in every Retrospective and rolled into the next
+      iteration. Link this panel to your Lessons Learned library or submission form.
     </div>
   </div>
 </div>
