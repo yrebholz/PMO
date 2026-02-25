@@ -15,8 +15,8 @@ function InitPMOMegaMenu() {
       ? _spPageContextInfo.webAbsoluteUrl
       : window.location.origin + window.location.pathname.replace(/\/Pages\/.*/i, "");
 
-    // 🔴 IMPORTANT: change this if your list is named differently
-    var listTitle = "PMONavigation";
+    // 👈 THIS is the important part for you
+    var listTitle = "Navigation";
 
     var requestUrl = siteUrl +
       "/_api/web/lists/getbytitle('" + listTitle + "')/items" +
@@ -58,7 +58,6 @@ function InitPMOMegaMenu() {
       return map;
     }
 
-    // Build the Templates mega panel (ProcessGroup > KnowledgeArea > items)
     function buildTemplatesMegaPanel(childItems) {
       var byProcessGroup = groupBy(childItems, function (it) { return it.ProcessGroup; });
 
@@ -80,7 +79,6 @@ function InitPMOMegaMenu() {
         pgTitle.textContent = pg || "Other";
         groupDiv.appendChild(pgTitle);
 
-        // Within this ProcessGroup, group by KnowledgeArea
         var byArea = groupBy(pgItems, function (it) { return it.KnowledgeArea; });
 
         Object.keys(byArea).sort().forEach(function (ka) {
@@ -102,7 +100,6 @@ function InitPMOMegaMenu() {
             var li = document.createElement("li");
             var a = document.createElement("a");
 
-            // Handle Hyperlink field vs Text
             var urlVal;
             if (it.Url && typeof it.Url === "object" && it.Url.Url) {
               urlVal = it.Url.Url;
@@ -141,7 +138,6 @@ function InitPMOMegaMenu() {
         return;
       }
 
-      // Top-level nav items (one per NavArea)
       var topLevelItems = items.filter(function (it) {
         return it.IsTopLevel === true || it.IsTopLevel === "true";
       });
@@ -167,7 +163,6 @@ function InitPMOMegaMenu() {
         var area = top.NavArea;
         var li = document.createElement("li");
 
-        // Only Templates gets a megamenu for now
         var hasMega = (area === "Templates");
         if (hasMega) {
           li.className = "pmo-has-mega";
@@ -197,8 +192,6 @@ function InitPMOMegaMenu() {
           }
         }
 
-        // For Methodology, Training, Governance, etc.,
-        // we leave them as simple links for now.
         ulRoot.appendChild(li);
       });
 
@@ -207,7 +200,7 @@ function InitPMOMegaMenu() {
       navContainer.appendChild(navEl);
     }
 
-    // Kick off REST call
+    // Call REST
     getJSON(requestUrl, function (data) {
       var items = (data && data.value) ? data.value : [];
       buildNav(items);
@@ -225,7 +218,7 @@ function InitPMOMegaMenu() {
   }
 }
 
-// Wire it into SharePoint's onload pipeline (this part was already working for you)
+// Same wiring as before (this part was working for you already)
 if (typeof _spBodyOnLoadFunctionNames !== "undefined") {
   _spBodyOnLoadFunctionNames.push("InitPMOMegaMenu");
 }
