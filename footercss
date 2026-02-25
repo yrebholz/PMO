@@ -31,6 +31,13 @@
 /* ===== Remove the tiny gap under the footer ===== */
 html, body { 
   margin: 0 !important; 
+  height:100%;
+}
+
+#s4-workspace {
+	min-height: 100%;
+	position: relative;
+	padding-bottom:60px;
 }
 
 #s4-workspace,
@@ -73,6 +80,14 @@ html, body {
   border: 0 !important;
 }
 
+.pmo-footer,
+#custom-footer {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
 /* If you use <p> tags inside the footer */
 .pmo-footer p,
 #custom-footer p {
@@ -93,6 +108,7 @@ body {
 .ms-dlgContent #custom-footer,
 .ms-dlgContent #DeltaPlaceHolderFooter,
 .ms-dlgContent #PlaceHolderPageFooter {
+  position: static !important;
   display: none !important;
 }
 
