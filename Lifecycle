@@ -650,7 +650,7 @@
           </div>
         </div>
 
-        <!-- iframes will be created & preloaded by JavaScript for faster loading -->
+        <!-- iframes will be created by JavaScript (lazy + background preload) -->
       </div>
     </div>
   </div>
@@ -671,7 +671,7 @@
     })();
   </script>
 
-  <!-- Lifecycle toggle + tab + iframe preloader/switcher -->
+  <!-- Lifecycle toggle + tab + iframe loader/switcher -->
   <script>
     (function(){
       var wrapper = document.getElementById("pmoVisualMethod");
@@ -728,7 +728,7 @@
         }
       }
 
-      // Store all preloaded frames here, keyed by "mode-index" (e.g. "waterfall-0", "agile-3")
+      // Store all frames here, keyed by "mode-index" (e.g. "waterfall-0", "agile-3")
       var preloadedFrames = {};
 
       // Article Page names in the Pages library
@@ -750,6 +750,7 @@
 
       var currentMode = "waterfall"; // "waterfall" or "agile"
       var currentStepIndex = 0;      // 0..4
+      var startedBackgroundPreload = false;
 
       // Resize iframe height to fit its content (respecting CSS min-height)
       function resizeIframeToContent(iframe) {
@@ -850,58 +851,81 @@
         return baseUrl + "/Pages/" + fileName + "?IsDlg=1";
       }
 
-      // Preload all the iframes up front
-      function preloadAllFrames() {
-        if (!articleWrapper) return;
+      // Create an iframe for a given mode + step
+      function createFrame(mode, idx) {
+        if (!articleWrapper) return null;
 
+        var url = buildPageUrl(mode, idx);
+        if (!url) return null;
+
+        var key = mode + "-" + idx;
+        if (preloadedFrames[key]) {
+          return preloadedFrames[key];
+        }
+
+        var iframe = document.createElement("iframe");
+        iframe.className = "pmo-article-frame";
+        iframe.title = "Lifecycle Step Details - " + mode + " step " + idx;
+        iframe.setAttribute("data-mode", mode);
+        iframe.setAttribute("data-step-index", idx);
+        iframe.setAttribute("data-loaded", "false");
+        iframe.src = url;
+
+        iframe.onload = function() {
+          iframe.setAttribute("data-loaded", "true");
+          styleEmbeddedArticle(iframe);
+          resizeIframeToContent(iframe);
+          setTimeout(function(){ resizeIframeToContent(iframe); }, 250);
+          setTimeout(function(){ resizeIframeToContent(iframe); }, 1000);
+
+          var modeAttr = iframe.getAttribute("data-mode");
+          var stepAttr = parseInt(iframe.getAttribute("data-step-index"), 10) || 0;
+
+          // If this iframe is currently active, hide the loader
+          if (modeAttr === currentMode && stepAttr === currentStepIndex) {
+            hideLoading();
+          }
+
+          // After the FIRST main page (waterfall-0) loads, begin background preload of others
+          if (!startedBackgroundPreload && modeAttr === "waterfall" && stepAttr === 0) {
+            startedBackgroundPreload = true;
+            setTimeout(preloadRemainingFrames, 50);
+          }
+        };
+
+        articleWrapper.appendChild(iframe);
+        preloadedFrames[key] = iframe;
+        return iframe;
+      }
+
+      function getOrCreateFrame(mode, idx) {
+        var key = mode + "-" + idx;
+        if (preloadedFrames[key]) {
+          return preloadedFrames[key];
+        }
+        return createFrame(mode, idx);
+      }
+
+      // Background-preload all other frames after the first one is visible
+      function preloadRemainingFrames() {
         var modes = ["waterfall", "agile"];
-
-        modes.forEach(function(mode) {
-          var pages = (mode === "agile") ? agilePages : waterfallPages;
-
+        modes.forEach(function(m) {
+          var pages = (m === "agile") ? agilePages : waterfallPages;
           pages.forEach(function(_, idx) {
-            var url = buildPageUrl(mode, idx);
-            if (!url) return;
-
-            var key = mode + "-" + idx;
-
-            var iframe = document.createElement("iframe");
-            iframe.className = "pmo-article-frame";
-            iframe.title = "Lifecycle Step Details - " + mode + " step " + idx;
-            iframe.setAttribute("data-mode", mode);
-            iframe.setAttribute("data-step-index", idx);
-            iframe.setAttribute("data-loaded", "false");
-            iframe.src = url;  // preload
-
-            iframe.onload = function() {
-              iframe.setAttribute("data-loaded", "true");
-              styleEmbeddedArticle(iframe);
-              // Resize once the content has loaded
-              resizeIframeToContent(iframe);
-              // Optional: recheck shortly after for late-loading content
-              setTimeout(function(){ resizeIframeToContent(iframe); }, 250);
-              setTimeout(function(){ resizeIframeToContent(iframe); }, 1000);
-
-              // If this iframe is the currently active one, stop showing loader
-              var modeAttr = iframe.getAttribute("data-mode");
-              var stepAttr = parseInt(iframe.getAttribute("data-step-index"), 10) || 0;
-              if (modeAttr === currentMode && stepAttr === currentStepIndex) {
-                hideLoading();
-              }
-            };
-
-            articleWrapper.appendChild(iframe);
-            preloadedFrames[key] = iframe;
+            // Skip the primary first page (already created)
+            if (m === "waterfall" && idx === 0) return;
+            var key = m + "-" + idx;
+            if (!preloadedFrames[key]) {
+              getOrCreateFrame(m, idx);
+            }
           });
         });
       }
 
       // Show the iframe for the current mode + step, hide all others
       function showCurrentFrame() {
-        var keyToShow = currentMode + "-" + currentStepIndex;
-        var frameToShow = preloadedFrames[keyToShow] || null;
+        var frameToShow = getOrCreateFrame(currentMode, currentStepIndex);
 
-        // Decide whether we need to show the loader
         if (frameToShow) {
           var isLoaded = frameToShow.getAttribute("data-loaded") === "true";
           if (!isLoaded) {
@@ -916,9 +940,11 @@
           var frame = preloadedFrames[key];
           if (!frame) continue;
 
-          if (key === keyToShow) {
+          var modeAttr = frame.getAttribute("data-mode");
+          var stepAttr = parseInt(frame.getAttribute("data-step-index"), 10) || 0;
+
+          if (modeAttr === currentMode && stepAttr === currentStepIndex) {
             frame.classList.add("active-frame");
-            // Ensure height is correct when we switch
             resizeIframeToContent(frame);
           } else {
             frame.classList.remove("active-frame");
@@ -1057,8 +1083,7 @@
         }
       }
 
-      // Preload all frames, then default to Waterfall step 0
-      preloadAllFrames();
+      // Initial: start in Waterfall mode; first frame will be lazy-created & loaded
       setMode("waterfall");
     })();
   </script>
