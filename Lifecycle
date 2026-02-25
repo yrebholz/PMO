@@ -1,528 +1,855 @@
-/* =========================================================
-   BASE LAYOUT & PAGE WRAPPER
-   ========================================================= */
-
-html, body {
-  margin: 0 !important;
-  height: 100%;
-  font-family: Helvetica, Arial, sans-serif;
-}
-
-/* Outer wrapper for the main page content */
-.page-wrapper {
-  width: 100%;
-  max-width: 100%;
-  background: #f9f9f9;
-  padding: 30px;
-  padding-bottom:70px;
-  box-sizing: border-box;
-
-  /* Sticky-footer layout */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Main content area (everything above the footer) */
-.pmo-content-area {
-  flex: 1 0 auto;
-}
-
-/* =========================================================
-   PAGE TITLE & HEADER STRIP
-   ========================================================= */
-
-h1.page-title {
-  margin: 0 0 8px;
-  color: #000;
-  font-size: 26px;
-}
-
-.custom-hr {
-  border: 0;
-  border-top: 5px solid #0078d4;
-  height: 0;
-  margin: 10px 0 25px;
-}
-
-/* =========================================================
-   LIFECYCLE CARD & TOGGLE
-   ========================================================= */
-
-.pmo-visual-method-wrapper {
-  max-width: 1400px;
-  margin: 0 auto;
-  background: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #dde2ee;
-  padding: 22px 24px 26px;
-  box-sizing: border-box;
-}
-
-/* Header section inside the lifecycle card */
-.pmo-visual-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.pmo-visual-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #000;
-}
-
-.pmo-visual-subtitle {
-  font-size: 12px;
-  color: #555;
-}
-
-/* Toggle buttons (Waterfall / Agile) */
-.pmo-toggle {
-  display: inline-flex;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid #2F528F;
-}
-
-.pmo-toggle button {
-  padding: 10px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  background: #eef3fb;
-  color: #0b3868;
-  border: none;
-  font-weight: 500;
-  min-width: 120px;
-}
-
-.pmo-toggle button:hover:not(.active) {
-  filter: brightness(0.96);
-}
-
-.pmo-toggle button.active {
-  background: #2F5597;
-  color: #fff;
-}
-
-/* =========================================================
-   LIFECYCLE TRACK & NODES
-   ========================================================= */
-
-.pmo-track-container {
-  position: relative;
-  margin-top: 8px;
-  padding: 28px 18px 14px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.pmo-track-background-line {
-  position: absolute;
-  left: 8%;
-  right: 8%;
-  top: 50%;
-  height: 7px;
-  border-radius: 999px;
-  z-index: 1;
-}
-
-.pmo-track {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 22px;
-  position: relative;
-  z-index: 2;
-}
-
-.pmo-node {
-  flex: 1 1 0;
-  max-width: 233px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
-
-.pmo-node-circle {
-  width: 76px;
-  height: 76px;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid transparent;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.pmo-node-icon {
-  font-size: 34px;
-}
-
-/* Hover: enlarge if NOT already active */
-.pmo-node:not(.active-step):hover .pmo-node-circle {
-  transform: scale(1.10);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
-}
-
-/* Selected step: stays large even when not hovering */
-.pmo-node.active-step .pmo-node-circle {
-  transform: scale(1.10);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
-}
-
-.pmo-node-label {
-  font-size: 15px;
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 4px;
-}
-
-.pmo-node-subtitle {
-  font-size: 12px;
-  color: #444;
-  line-height: 1.45;
-}
-
-/* =========================================================
-   COLOR THEMES (WATERFALL vs AGILE)
-   ========================================================= */
-
-/* WATERFALL BACKGROUND & LINE */
-.mode-waterfall .pmo-track-container {
-  background: linear-gradient(135deg, #f7f9fc, #eef3fb);
-}
-
-.mode-waterfall .pmo-track-background-line {
-  background: linear-gradient(90deg, #5a7bcf, #2f5597);
-  opacity: 0.35;
-}
-
-/* WATERFALL NODES (1–5) */
-.mode-waterfall .waterfall-track .pmo-node:nth-child(1) .pmo-node-circle {
-  background: linear-gradient(135deg,#e5f0ff,#b6ceff);
-  border-color:#385acb; color:#1f3b8e;
-}
-.mode-waterfall .waterfall-track .pmo-node:nth-child(2) .pmo-node-circle {
-  background:linear-gradient(135deg,#e8f3ff,#9fd4ff);
-  border-color:#1f7ed1; color:#105087;
-}
-.mode-waterfall .waterfall-track .pmo-node:nth-child(3) .pmo-node-circle {
-  background:linear-gradient(135deg,#e7f5ff,#96e0ff);
-  border-color:#1695c8; color:#0f5676;
-}
-.mode-waterfall .waterfall-track .pmo-node:nth-child(4) .pmo-node-circle {
-  background:linear-gradient(135deg,#ebf4ff,#c2d2ff);
-  border-color:#4b64d9; color:#27307a;
-}
-.mode-waterfall .waterfall-track .pmo-node:nth-child(5) .pmo-node-circle {
-  background:linear-gradient(135deg,#f3f0ff,#d3c6ff);
-  border-color:#8052e1; color:#47258e;
-}
-
-/* AGILE BACKGROUND & LINE (pink/purple) */
-.mode-agile .pmo-track-container {
-  background: linear-gradient(135deg,#faf1ff,#f5e4ff);
-}
-
-.mode-agile .pmo-track-background-line {
-  background: linear-gradient(90deg,#c25bff,#6a1bb5);
-  opacity:0.4;
-}
-
-/* AGILE NODES (1–5) */
-.mode-agile .agile-track .pmo-node:nth-child(1) .pmo-node-circle {
-  background:linear-gradient(135deg,#f7e8ff,#e0b8ff);
-  border-color:#8e30c8; color:#551075;
-}
-.mode-agile .agile-track .pmo-node:nth-child(2) .pmo-node-circle {
-  background:linear-gradient(135deg,#fbe5ff,#f0a8ff);
-  border-color:#b23acb; color:#6f127c;
-}
-.mode-agile .agile-track .pmo-node:nth-child(3) .pmo-node-circle {
-  background:linear-gradient(135deg,#ffe6fb,#ffb0e5);
-  border-color:#c23aa7; color:#7d155f;
-}
-.mode-agile .agile-track .pmo-node:nth-child(4) .pmo-node-circle {
-  background:linear-gradient(135deg,#ffeaf7,#ffbddf);
-  border-color:#cc4ba7; color:#811d60;
-}
-.mode-agile .agile-track .pmo-node:nth-child(5) .pmo-node-circle {
-  background:linear-gradient(135deg,#fff0f8,#ffd0ef);
-  border-color:#b7328f; color:#741650;
-}
-
-/* =========================================================
-   TRACK VISIBILITY (ONLY ONE AT A TIME)
-   ========================================================= */
-
-.pmo-track.waterfall-track {
-  display: flex;
-}
-
-.pmo-track.agile-track {
-  display: none;
-}
-
-.mode-agile .waterfall-track {
-  display: none;
-}
-
-.mode-agile .agile-track {
-  display: flex;
-}
-
-/* Reset margin-left for button-like inputs (matches your earlier pattern) */
-input[type=button],
-input[type=reset],
-input[type=submit],
-button {
-  margin-left: 0;
-}
-
-/* =========================================================
-   TABS UNDER THE LIFECYCLE
-   ========================================================= */
-
-.pmo-tabs-container {
-  margin-top: 18px;
-  padding-top: 10px;
-  border-top: 1px solid #dde2ee;
-}
-
-.pmo-tabs {
-  display: flex;
-  flex-wrap: nowrap;
-  width: 100%;
-}
-
-.pmo-tab {
-  flex: 1 1 0;
-  text-align: center;
-  padding: 8px 6px;
-  font-size: 13px;
-  border-radius: 0;
-  border: 1px solid #dde2ee;
-  border-right: none;
-  background: #eef3fb;
-  color: #0b3868;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.pmo-tab:last-child {
-  border-right: 1px solid #dde2ee;
-}
-
-.pmo-tab:hover {
-  filter: brightness(0.96);
-}
-
-.pmo-tab.active {
-  background: #ffffff;
-  border-bottom-color: #ffffff;
-  color: #2F5597;
-  font-weight: 600;
-}
-
-/* Waterfall tabs shown by default, Agile tabs hidden unless mode-agile */
-.tabs-waterfall {
-  display: flex;
-}
-
-.tabs-agile {
-  display: none;
-}
-
-.mode-agile .tabs-waterfall {
-  display: none;
-}
-
-.mode-agile .tabs-agile {
-  display: flex;
-}
-
-/* =========================================================
-   EMBEDDED ARTICLE PANEL (IFRAME)
-   ========================================================= */
-
-.pmo-article-wrapper {
-  margin-top: 0;
-}
-
-.pmo-article-frame {
-  width: 100%;
-  min-height: 650px; /* adjust as needed */
-  border: 1px solid #dde2ee;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  background: #ffffff;
-}
-
-/* =========================================================
-   RESPONSIVE TWEAKS
-   ========================================================= */
-
-@media (max-width: 768px) {
-  .pmo-visual-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .pmo-track {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .pmo-track-background-line {
-    display: none;
-  }
-
-  .pmo-node {
-    max-width: none;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    text-align: left;
-    gap: 10px;
-  }
-
-  .pmo-node-circle {
-    margin: 0;
-  }
-
-  .pmo-node-label {
-    font-size: 13px;
-  }
-
-  .pmo-tabs {
-    flex-wrap: wrap;
-  }
-
-  .pmo-tab {
-    flex: 1 1 50%;
-    font-size: 12px;
-    padding: 6px 4px;
-  }
-}
-
-/* =========================================================
-   PMO FOOTER (YOUR EXISTING VISUAL STYLES)
-   ========================================================= */
-
-.pmo-footer {
-  background:#2F5597;
-  color:#fff;
-  font: 14px/1.6 "Segoe UI", Helvetica, Arial, sans-serif;
-  padding: 12px 20px;
-  }
-  
- /*.pmo-footer,#custom-footer {
- 	height:60px;
- 	box-sizing:border-box;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Project Delivery Lifecycle</title>
+
+  <style>
+    /* =========================================================
+       BASE LAYOUT & PAGE WRAPPER
+       ========================================================= */
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 100%;
+      background: #f9f9f9;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+    
+
+    /* When this page itself is loaded in an iframe or dialog,
+       you can tweak padding and hide global nav via the in-iframe class.
+       (Global nav lives on master pages, so this is defensive for later use.) */
+    .in-iframe .page-wrapper {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+
+    .in-iframe div#globalNavBox {
+      display: none !important;
+    }
+    
+
+    /*=========================================================
+       PAGE TITLE & HEADER STRIP
+       ========================================================= */
+
+    h1.page-title {
+      margin: 0 0 8px;
+      color: #000;
+      font-size: 26px;
+    }
+
+    .custom-hr {
+      border: 0;
+      border-top: 5px solid #0078d4;
+      height: 0;
+      margin: 10px 0 25px;
+    }
+
+    /* =========================================================
+       LIFECYCLE CARD & TOGGLE
+       ========================================================= */
+
+    .pmo-visual-method-wrapper {
+      max-width: 100%;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #dde2ee;
+      padding: 22px 24px 26px;
+      box-sizing: border-box;
+    }
+
+    /* Header section inside the lifecycle card */
+    .pmo-visual-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .pmo-visual-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .pmo-visual-subtitle {
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* Toggle buttons (Waterfall / Agile) */
+    .pmo-toggle {
+      display: inline-flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #2F528F;
+    }
+
+    .pmo-toggle button {
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #eef3fb;
+      color: #0b3868;
+      border: none;
+      font-weight: 500;
+      min-width: 120px;
+    }
+
+    .pmo-toggle button:hover:not(.active) {
+      filter: brightness(0.96);
+    }
+
+    .pmo-toggle button.active {
+      background: #2F5597;
+      color: #fff;
+    }
+
+    /* Reset left margin on generic buttons/inputs */
+    input[type=button],
+    input[type=reset],
+    input[type=submit],
+    button {
+      margin-left: 0;
+    }
+    
+	div.article{
+	padding: 0px 10px !important;
 	}
-	
-  /* Sticky-footer layout: keep at bottom, don't shrink */
-  /*flex-shrink: 0;*/
-  position:fixed;
-  left:0;
-  bottom:0;
-  width:100%;
-  z-index:9999;
-  margin:0 !important;
-  border:0 !important;
-}
 
-.pmo-footer a {
-  color:#fff;
-  text-decoration:underline;
-}
+    /* =========================================================
+       LIFECYCLE TRACK & NODES
+       ========================================================= */
 
-.pmo-footer .pmo-footer-inner {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:16px;
-  max-width:1200px;
-  margin:0 auto;
-}
+    .pmo-track-container {
+      position: relative;
+      margin-top: 8px;
+      padding: 28px 18px 14px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-.pmo-footer .sep {
-  opacity:.8;
-  padding:0 8px;
-}
+    .pmo-track-background-line {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      top: 50%;
+      height: 7px;
+      border-radius: 999px;
+      z-index: 1;
+    }
 
-@media (max-width: 768px){
-  .pmo-footer .pmo-footer-inner {
-    flex-direction:column;
-    align-items:flex-start;
-  }
-}
+    .pmo-track {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 22px;
+      position: relative;
+      z-index: 2;
+    }
 
-/* If you also use #custom-footer, keep it visually aligned */
-#custom-footer {
-  margin: 0 !important;
-  border: 0 !important;
-}
+    .pmo-node {
+      flex: 1 1 0;
+      max-width: 233px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
 
-/* If you use <p> tags inside the footer */
-.pmo-footer p,
-#custom-footer p {
-  margin: 0 !important;
-}
+    .pmo-node-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid transparent;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
 
-/* =========================================================
-   SHAREPOINT GAP / SEAM CLEANUP
-   ========================================================= */
+    .pmo-node-icon {
+      font-size: 34px;
+    }
 
-/* Remove tiny gaps/margins under footer and around workspace */
-#s4-workspace,
-#s4-bodyContainer {
-  padding-bottom: 1px !important;
-  margin-bottom: 0 !important;
-}
+    /* Hover: enlarge if NOT already active */
+    .pmo-node:not(.active-step):hover .pmo-node-circle {
+      transform: scale(1.10);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+    }
 
-.ms-dlgContent .pmo-footer,
-.ms-dlgContent #custom-footer {
-	display: none !important;
-}
+    /* Selected step: stays large even when not hovering */
+    .pmo-node.active-step .pmo-node-circle {
+      transform: scale(1.10);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+    }
 
-/* Oslo / SE wrappers that add bottom spacing */
-#ms-belltown-table,
-#contentBox,
-.contentwrapper,
-.ms-pub-contentLayout,
-.ms-tableRow:last-child,
-.ms-tableCell:last-child {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
+    .pmo-node-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 4px;
+    }
 
-/* Status bar can leave a sliver even when empty */
-#pageStatusBar {
-  margin: 0 !important;
-  padding: 0 !important;
-  min-height: 0 !important;
-  height: 0 !important;
-}
+    .pmo-node-subtitle {
+      font-size: 12px;
+      color: #444;
+      line-height: 1.45;
+    }
 
-/* Footer containers: no extra spacing from the master page */
-#DeltaPlaceHolderFooter,
-#PlaceHolderPageFooter {
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-}
+    /* =========================================================
+       COLOR THEMES (WATERFALL vs AGILE)
+       ========================================================= */
 
-/* Optional: ensure page bg matches footer edge (avoids faint seam) */
-body {
-  background-color: #fff;
-}
+    /* WATERFALL BACKGROUND & LINE */
+    .mode-waterfall .pmo-track-container {
+      background: linear-gradient(135deg, #f7f9fc, #eef3fb);
+    }
+
+    .mode-waterfall .pmo-track-background-line {
+      background: linear-gradient(90deg, #5a7bcf, #2f5597);
+      opacity: 0.35;
+    }
+
+    /* WATERFALL NODES (1–5) */
+    .mode-waterfall .waterfall-track .pmo-node:nth-child(1) .pmo-node-circle {
+      background: linear-gradient(135deg,#e5f0ff,#b6ceff);
+      border-color:#385acb; color:#1f3b8e;
+    }
+    .mode-waterfall .waterfall-track .pmo-node:nth-child(2) .pmo-node-circle {
+      background:linear-gradient(135deg,#e8f3ff,#9fd4ff);
+      border-color:#1f7ed1; color:#105087;
+    }
+    .mode-waterfall .waterfall-track .pmo-node:nth-child(3) .pmo-node-circle {
+      background:linear-gradient(135deg,#e7f5ff,#96e0ff);
+      border-color:#1695c8; color:#0f5676;
+    }
+    .mode-waterfall .waterfall-track .pmo-node:nth-child(4) .pmo-node-circle {
+      background:linear-gradient(135deg,#ebf4ff,#c2d2ff);
+      border-color:#4b64d9; color:#27307a;
+    }
+    .mode-waterfall .waterfall-track .pmo-node:nth-child(5) .pmo-node-circle {
+      background:linear-gradient(135deg,#f3f0ff,#d3c6ff);
+      border-color:#8052e1; color:#47258e;
+    }
+
+    /* AGILE BACKGROUND & LINE (pink/purple) */
+    .mode-agile .pmo-track-container {
+      background: linear-gradient(135deg,#faf1ff,#f5e4ff);
+    }
+
+    .mode-agile .pmo-track-background-line {
+      background: linear-gradient(90deg,#c25bff,#6a1bb5);
+      opacity:0.4;
+    }
+
+    /* AGILE NODES (1–5) */
+    .mode-agile .agile-track .pmo-node:nth-child(1) .pmo-node-circle {
+      background:linear-gradient(135deg,#f7e8ff,#e0b8ff);
+      border-color:#8e30c8; color:#551075;
+    }
+    .mode-agile .agile-track .pmo-node:nth-child(2) .pmo-node-circle {
+      background:linear-gradient(135deg,#fbe5ff,#f0a8ff);
+      border-color:#b23acb; color:#6f127c;
+    }
+    .mode-agile .agile-track .pmo-node:nth-child(3) .pmo-node-circle {
+      background:linear-gradient(135deg,#ffe6fb,#ffb0e5);
+      border-color:#c23aa7; color:#7d155f;
+    }
+    .mode-agile .agile-track .pmo-node:nth-child(4) .pmo-node-circle {
+      background:linear-gradient(135deg,#ffeaf7,#ffbddf);
+      border-color:#cc4ba7; color:#811d60;
+    }
+    .mode-agile .agile-track .pmo-node:nth-child(5) .pmo-node-circle {
+      background:linear-gradient(135deg,#fff0f8,#ffd0ef);
+      border-color:#b7328f; color:#741650;
+    }
+
+    /* =========================================================
+       TRACK VISIBILITY (ONLY ONE AT A TIME)
+       ========================================================= */
+
+    .pmo-track.waterfall-track {
+      display: flex;
+    }
+
+    .pmo-track.agile-track {
+      display: none;
+    }
+
+    .mode-agile .waterfall-track {
+      display: none;
+    }
+
+    .mode-agile .agile-track {
+      display: flex;
+    }
+
+    /* =========================================================
+       TABS UNDER THE LIFECYCLE
+       ========================================================= */
+
+    .pmo-tabs-container {
+      margin-top: 18px;
+      padding-top: 10px;
+      border-top: 1px solid #dde2ee;
+    }
+
+    .pmo-tabs {
+      display: flex;
+      flex-wrap: nowrap;
+      width: 100%;
+    }
+
+    .pmo-tab {
+      flex: 1 1 0;
+      text-align: center;
+      padding: 8px 6px;
+      font-size: 13px;
+      border-radius: 0;
+      border: 1px solid #dde2ee;
+      border-right: none;
+      background: #eef3fb;
+      color: #0b3868;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pmo-tab:last-child {
+      border-right: 1px solid #dde2ee;
+    }
+
+    .pmo-tab:hover {
+      filter: brightness(0.96);
+    }
+
+    .pmo-tab.active {
+      background: #ffffff;
+      border-bottom-color: #ffffff;
+      color: #2F5597;
+      font-weight: 600;
+    }
+
+    /* Waterfall tabs shown by default, Agile tabs hidden unless mode-agile */
+    .tabs-waterfall {
+      display: flex;
+    }
+
+    .tabs-agile {
+      display: none;
+    }
+
+    .mode-agile .tabs-waterfall {
+      display: none;
+    }
+
+    .mode-agile .tabs-agile {
+      display: flex;
+    }
+
+    /* =========================================================
+       EMBEDDED ARTICLE PANEL (IFRAME)
+       ========================================================= */
+
+    .pmo-article-wrapper {
+      margin-top: 0;
+    }
+
+    .pmo-article-frame {
+      width: 100%;
+      min-height: 650px; /* adjust as needed */
+      border: 1px solid #dde2ee;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      background: #ffffff;
+      display:none;
+    }
+    
+    .pmo-article-frame.active-frame {
+	  display:block;
+	}
+
+    /* =========================================================
+       RESPONSIVE TWEAKS
+       ========================================================= */
+
+    @media (max-width: 768px) {
+      .pmo-visual-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .pmo-track {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .pmo-track-background-line {
+        display: none;
+      }
+
+      .pmo-node {
+        max-width: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 10px;
+      }
+
+      .pmo-node-circle {
+        margin: 0;
+      }
+
+      .pmo-node-label {
+        font-size: 13px;
+      }
+
+      .pmo-tabs {
+        flex-wrap: wrap;
+      }
+
+      .pmo-tab {
+        flex: 1 1 50%;
+        font-size: 12px;
+        padding: 6px 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <h1 class="page-title">Project Delivery Lifecycle</h1>
+    <hr class="custom-hr" />
+
+    <div id="pmoVisualMethod" class="pmo-visual-method-wrapper mode-waterfall">
+      <div class="pmo-visual-header">
+        <div>
+          <div class="pmo-visual-title">Lifecycle by Methodology</div>
+          <div class="pmo-visual-subtitle" id="pmoVisualSubtitle">
+            Viewing: <strong>Waterfall (PMI process groups)</strong>. Use the toggle to switch to the Agile / iterative view.
+          </div>
+        </div>
+
+        <div class="pmo-toggle">
+          <button id="btnVMWaterfall" type="button" class="active">Waterfall (PMI)</button>
+          <button id="btnVMAgile" type="button">Agile / Iterative</button>
+        </div>
+      </div>
+
+      <div class="pmo-track-container">
+        <div class="pmo-track-background-line"></div>
+
+        <!-- WATERFALL -->
+        <div class="pmo-track waterfall-track">
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">💡</span></div>
+            <div class="pmo-node-label">Initiation</div>
+            <div class="pmo-node-subtitle">
+              Define opportunity, scope, sponsors, and strategic value.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">📝</span></div>
+            <div class="pmo-node-label">Planning</div>
+            <div class="pmo-node-subtitle">
+              Build requirements, schedule, governance, and communication plans.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">⚙️</span></div>
+            <div class="pmo-node-label">Execution</div>
+            <div class="pmo-node-subtitle">
+              Deliver the approved scope and coordinate teams.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">📊</span></div>
+            <div class="pmo-node-label">Monitoring &amp; Controlling</div>
+            <div class="pmo-node-subtitle">
+              Track progress, manage changes, and report status.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">🏁</span></div>
+            <div class="pmo-node-label">Closure</div>
+            <div class="pmo-node-subtitle">
+              Formal acceptance, transition, and lessons learned.
+            </div>
+          </div>
+        </div>
+
+        <!-- AGILE -->
+        <div class="pmo-track agile-track">
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">🧭</span></div>
+            <div class="pmo-node-label">Discovery / Vision</div>
+            <div class="pmo-node-subtitle">
+              Clarify product vision, value, and stakeholders.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">📋</span></div>
+            <div class="pmo-node-label">Backlog &amp; Planning</div>
+            <div class="pmo-node-subtitle">
+              Prioritize work and prepare the next iteration.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">🚀</span></div>
+            <div class="pmo-node-label">Iteration / Sprint</div>
+            <div class="pmo-node-subtitle">
+              Deliver increments in timeboxed cycles.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">👀</span></div>
+            <div class="pmo-node-label">Review / Acceptance</div>
+            <div class="pmo-node-subtitle">
+              Demonstrate working product and gather feedback.
+            </div>
+          </div>
+
+          <div class="pmo-node">
+            <div class="pmo-node-circle"><span class="pmo-node-icon">🔁</span></div>
+            <div class="pmo-node-label">Retrospective</div>
+            <div class="pmo-node-subtitle">
+              Improve process and prepare for the next cycle.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs under lifecycle -->
+      <div class="pmo-tabs-container">
+        <!-- Waterfall tabs -->
+        <div class="pmo-tabs tabs-waterfall">
+          <button class="pmo-tab active" data-step="0">Initiation</button>
+          <button class="pmo-tab" data-step="1">Planning</button>
+          <button class="pmo-tab" data-step="2">Execution</button>
+          <button class="pmo-tab" data-step="3">Monitoring &amp; Controlling</button>
+          <button class="pmo-tab" data-step="4">Closure</button>
+        </div>
+
+        <!-- Agile tabs -->
+        <div class="pmo-tabs tabs-agile">
+          <button class="pmo-tab active" data-step="0">Discovery / Vision</button>
+          <button class="pmo-tab" data-step="1">Backlog &amp; Planning</button>
+          <button class="pmo-tab" data-step="2">Iteration / Sprint</button>
+          <button class="pmo-tab" data-step="3">Review / Acceptance</button>
+          <button class="pmo-tab" data-step="4">Retrospective</button>
+        </div>
+      </div>
+
+      <!-- Embedded article area -->
+      <div class="pmo-article-wrapper" id="pmoArticleWrapper">
+        <!-- iframes will be created & preloaded by Javascript for faster loading time -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Detect IsDlg / iframe for this page itself (if ever used that way) -->
+  <script>
+    (function () {
+      var urlParams = new URLSearchParams(window.location.search || "");
+      var isDlg = urlParams.get("IsDlg") === "1";
+      var inIframe = (window.self !== window.top);
+
+      if (isDlg || inIframe) {
+        var root = document.documentElement;
+        if (!root.classList.contains("in-iframe")) {
+          root.classList.add("in-iframe");
+        }
+      }
+    })();
+  </script>
+
+  <!-- Lifecycle toggle + tab + iframe loader -->
+  <script>
+    (function(){
+      var wrapper = document.getElementById("pmoVisualMethod");
+      if (!wrapper) { return; }
+
+      var btnWF = document.getElementById("btnVMWaterfall");
+      var btnAg = document.getElementById("btnVMAgile");
+      var subtitle = document.getElementById("pmoVisualSubtitle");
+      var articleFrame = document.getElementById("pmoArticleFrame");
+      
+      //Store all preloaded frames here, keyed by "mode-index"
+      var preloadedFrames = {}; // e.g. "waterfall-0", "agile-3"
+
+            // Inject CSS into the article page INSIDE the iframe
+      function styleEmbeddedArticle() {
+        if (!articleFrame || !articleFrame.contentWindow) return;
+
+        try {
+          var doc = articleFrame.contentWindow.document;
+          if (!doc) return;
+
+          // Tag the article's <html> so CSS can key off it if needed
+          var html = doc.documentElement;
+          if (html && html.className.indexOf("embedded-article") === -1) {
+            html.className += (html.className ? " " : "") + "embedded-article";
+          }
+
+          // Only inject our style block once
+          var style = doc.getElementById("pmoEmbedStyle");
+          if (!style) {
+            style = doc.createElement("style");
+            style.id = "pmoEmbedStyle";
+            style.type = "text/css";
+
+            style.appendChild(doc.createTextNode(
+              // Make body full-width with side padding
+              ".embedded-article body{" +
+                "margin:0!important;" +
+                "background:#fff!important;" +
+              "}" +
+              // Hide nav + ribbons + footer inside the article page
+              ".embedded-article #globalNavBox," +
+              ".embedded-article #s4-ribbonrow," +
+              ".embedded-article #s4-titlerow," +
+              ".embedded-article #DeltaTopNavigation," +
+              ".embedded-article #DeltaPlaceHolderFooter{" +
+                "display:none!important;" +
+              "}" +
+              // Tighten body container
+              ".embedded-article #s4-bodyContainer{" +
+                "padding:0px 10px !important;" +
+                "margin:0!important;" +
+              "}"
+            ));
+
+            doc.head.appendChild(style);
+          }
+        } catch (e) {
+          // If it ever fails due to cross-domain (shouldn't in SE), just ignore
+          if (window.console && console.warn) {
+            console.warn("Could not style embedded article:", e);
+          }
+        }
+      }
+
+      // Style the article each time it finishes loading in the iframe
+      if (articleFrame) {
+        articleFrame.onload = function () {
+          styleEmbeddedArticle();
+        };
+      }
+
+      var currentMode = "waterfall"; // "waterfall" or "agile"
+      var currentStepIndex = 0;      // 0..4
+
+      // Article Page names in the Pages library
+      // Adjust these names to match your actual pages
+      var waterfallPages = [
+        "Waterfall-Initiation.aspx",
+        "Waterfall-Planning.aspx",
+        "Waterfall-Execution.aspx",
+        "Waterfall-MonitoringControlling.aspx",
+        "Waterfall-Closure.aspx"
+      ];
+
+      var agilePages = [
+        "Agile-DiscoveryVision.aspx",
+        "Agile-BacklogPlanning.aspx",
+        "Agile-IterationSprint.aspx",
+        "Agile-ReviewAcceptance.aspx",
+        "Agile-Retrospective.aspx"
+      ];
+
+      // Get site base URL from this file's path:
+      // e.g. /sites/PMO/SitePages/html/lifecycle.html -> /sites/PMO
+      function getSiteBaseUrl() {
+        var origin = window.location.origin ||
+                     (window.location.protocol + "//" + window.location.host);
+        var path = window.location.pathname || "";
+        var idx = path.toLowerCase().indexOf("/sitepages/");
+        var sitePath = idx >= 0 ? path.substring(0, idx) : "";
+        // origin + sitePath => full site URL (no trailing slash)
+        return (origin.replace(/\/$/, "") + sitePath);
+      }
+
+            function loadPageIntoFrame(stepIndex) {
+        if (!articleFrame) { return; }
+
+        var pages = (currentMode === "agile") ? agilePages : waterfallPages;
+        var fileName = pages[stepIndex];
+        if (!fileName) { return; }
+
+        var baseUrl = getSiteBaseUrl();
+        // Build URL: https://server/sites/SiteName/Pages/PageName.aspx?IsDlg=1
+        var targetUrl = baseUrl + "/Pages/" + fileName + "?IsDlg=1";
+
+        articleFrame.src = targetUrl;
+
+        // Just in case, try styling shortly after src change too
+        setTimeout(styleEmbeddedArticle, 1000);
+      }
+
+      function updateActiveStepClasses() {
+        var i;
+
+        // Clear active-step from all nodes
+        var allNodes = wrapper.querySelectorAll(".pmo-node");
+        for (i = 0; i < allNodes.length; i++) {
+          allNodes[i].className = allNodes[i].className.replace(/\s*active-step/g, "");
+        }
+
+        // Add active-step to the node in the current track
+        var trackSelector = (currentMode === "agile") ? ".agile-track" : ".waterfall-track";
+        var track = wrapper.querySelector(trackSelector);
+        if (track) {
+          var stepNodes = track.querySelectorAll(".pmo-node");
+          if (stepNodes[currentStepIndex]) {
+            stepNodes[currentStepIndex].className += " active-step";
+          }
+        }
+
+        // Clear active from all tabs
+        var allTabs = wrapper.querySelectorAll(".pmo-tab");
+        for (i = 0; i < allTabs.length; i++) {
+          allTabs[i].className = allTabs[i].className.replace(/\s*active\b/, "");
+        }
+
+        // Set active on current mode's tabs
+        var tabsSelector = (currentMode === "agile") ? ".tabs-agile .pmo-tab"
+                                                    : ".tabs-waterfall .pmo-tab";
+        var tabs = wrapper.querySelectorAll(tabsSelector);
+        if (tabs[currentStepIndex]) {
+          tabs[currentStepIndex].className += " active";
+        }
+      }
+
+      function setActiveStep(stepIndex, shouldLoadPage) {
+        currentStepIndex = stepIndex;
+        updateActiveStepClasses();
+        if (shouldLoadPage) {
+          loadPageIntoFrame(stepIndex);
+        }
+      }
+
+      function setMode(mode){
+        currentMode = (mode === "agile") ? "agile" : "waterfall";
+        wrapper.className = "pmo-visual-method-wrapper " +
+          (currentMode === "agile" ? "mode-agile" : "mode-waterfall");
+
+        // Reset to first step when switching modes
+        currentStepIndex = 0;
+
+        if(currentMode === "waterfall"){
+          if (btnWF) { btnWF.classList.add("active"); }
+          if (btnAg) { btnAg.classList.remove("active"); }
+          if (subtitle) {
+            subtitle.innerHTML =
+              'Viewing: <strong>Waterfall (PMI process groups)</strong>. ' +
+              'Use the toggle to switch to the Agile / iterative view.';
+          }
+        } else {
+          if (btnWF) { btnWF.classList.remove("active"); }
+          if (btnAg) { btnAg.classList.add("active"); }
+          if (subtitle) {
+            subtitle.innerHTML =
+              'Viewing: <strong>Agile / iterative lifecycle</strong>. ' +
+              'Use the toggle to switch back to the Waterfall (PMI) view.';
+          }
+        }
+
+        updateActiveStepClasses();
+        loadPageIntoFrame(currentStepIndex);
+      }
+
+      // Toggle buttons
+      if (btnWF) {
+        btnWF.onclick = function(e){
+          if(e && e.preventDefault) e.preventDefault();
+          setMode("waterfall");
+        };
+      }
+      if (btnAg) {
+        btnAg.onclick = function(e){
+          if(e && e.preventDefault) e.preventDefault();
+          setMode("agile");
+        };
+      }
+
+      // Tab clicks
+      var tabButtons = wrapper.querySelectorAll(".pmo-tab");
+      var i;
+      for (i = 0; i < tabButtons.length; i++) {
+        (function(btn){
+          btn.onclick = function(e){
+            if (e && e.preventDefault) { e.preventDefault(); }
+            var step = parseInt(btn.getAttribute("data-step"), 10);
+            if (isNaN(step)) { return; }
+            setActiveStep(step, true);
+          };
+        })(tabButtons[i]);
+      }
+
+      // Node (icon) clicks: Waterfall
+      var waterfallTrack = wrapper.querySelector(".waterfall-track");
+      if (waterfallTrack) {
+        var wfNodes = waterfallTrack.querySelectorAll(".pmo-node");
+        for (i = 0; i < wfNodes.length; i++) {
+          (function(node, idx){
+            node.onclick = function(e){
+              if (e && e.preventDefault) e.preventDefault();
+              if (currentMode !== "waterfall") {
+                setMode("waterfall");
+              } else {
+                setActiveStep(idx, true);
+              }
+            };
+          })(wfNodes[i], i);
+        }
+      }
+
+      // Node (icon) clicks: Agile
+      var agileTrack = wrapper.querySelector(".agile-track");
+      if (agileTrack) {
+        var agNodes = agileTrack.querySelectorAll(".pmo-node");
+        for (i = 0; i < agNodes.length; i++) {
+          (function(node, idx){
+            node.onclick = function(e){
+              if (e && e.preventDefault) e.preventDefault();
+              if (currentMode !== "agile") {
+                setMode("agile");
+              } else {
+                setActiveStep(idx, true);
+              }
+            };
+          })(agNodes[i], i);
+        }
+      }
+
+      // Default mode & step on page load
+      setMode("waterfall");  // sets mode + stepIndex = 0 + loads Initiation
+    })();
+  </script>
+</body>
+</html>
