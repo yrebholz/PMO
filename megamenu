@@ -1,33 +1,30 @@
 // /Style Library/PMO/Navigation/megamenu.js
-// Phase 1: simple flat nav driven by the "Navigation" list (Title, URL, SortOrder)
+// v3 - Uses Title + NavArea, no IsTopLevel needed
 
 function InitPMOMegaMenu() {
   try {
-    console.log("PMO SimpleNav: InitPMOMegaMenu starting...");
+    console.log("PMO MegaMenu v3: Init starting...");
 
     var navContainer = document.getElementById("pmoMegaNav");
     if (!navContainer) {
-      console.warn("PMO SimpleNav: #pmoMegaNav not found on page.");
+      console.warn("PMO MegaMenu v3: #pmoMegaNav not found on page.");
       return;
     }
 
-    // Use _spPageContextInfo if available, otherwise fall back
+    // Site URL
     var siteUrl = (typeof _spPageContextInfo !== "undefined" && _spPageContextInfo.webAbsoluteUrl)
       ? _spPageContextInfo.webAbsoluteUrl
       : window.location.origin + window.location.pathname.replace(/\/Pages\/.*/i, "");
 
-    // Your list is named "Navigation"
     var listTitle = "Navigation";
 
-    // We keep it minimal: Title, URL, SortOrder
-    // NOTE: "URL" here must match the INTERNAL NAME of your hyperlink column
+    // NOTE: "URL" must match the internal name of your hyperlink column
     var requestUrl = siteUrl +
       "/_api/web/lists/getbytitle('" + listTitle + "')/items" +
-      "?$select=Id,Title,URL,SortOrder" +
+      "?$select=Id,Title,URL,NavArea,ProcessGroup,KnowledgeArea,SortOrder" +
       "&$orderby=SortOrder,Title";
 
-    console.log("PMO SimpleNav: siteUrl =", siteUrl);
-    console.log("PMO SimpleNav: REST URL =", requestUrl);
+    console.log("PMO MegaMenu v3: REST URL =", requestUrl);
 
     function getJSON(url, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
@@ -40,66 +37,159 @@ function InitPMOMegaMenu() {
             var data = JSON.parse(xhr.responseText);
             onSuccess(data);
           } catch (e) {
-            console.error("PMO SimpleNav: JSON parse error", e);
+            console.error("PMO MegaMenu v3: JSON parse error", e);
             if (onError) onError(e);
           }
         } else {
-          console.error("PMO SimpleNav: HTTP error", xhr.status, xhr.statusText);
-          if (onError) onError(xhr.statusText || ("HTTP " + xhr.status));
+          console.error("PMO MegaMenu v3: HTTP", xhr.status, xhr.statusText);
+          if (onError) onError(xhr.statusText);
         }
       };
       xhr.send();
     }
 
-    function buildNav(items) {
-      console.log("PMO SimpleNav: item count =", items.length);
-      console.log("PMO SimpleNav: items sample =", items[0]);
+    function groupBy(arr, fn) {
+      var map = {};
+      (arr || []).forEach(function (item) {
+        var key = fn(item) || "";
+        if (!map[key]) map[key] = [];
+        map[key].push(item);
+      });
+      return map;
+    }
 
-      if (!items || !items.length) {
+    function getUrlFromField(field) {
+      if (!field) return "#";
+      if (typeof field === "string") return field;
+      if (field.Url) return field.Url;
+      if (field.url) return field.url;
+      return "#";
+    }
+
+    // ---------------------------
+    // Templates mega-menu builder
+    // ---------------------------
+    function buildTemplatesPanel(children) {
+      var byProcess = groupBy(children, function (i) { return i.ProcessGroup; });
+
+      var panel = document.createElement("div");
+      panel.className = "pmo-mega-panel";
+
+      var wrapper = document.createElement("div");
+      wrapper.className = "pmo-mega-groups";
+
+      Object.keys(byProcess).sort().forEach(function (pg) {
+        var pgItems = byProcess[pg];
+        if (!pgItems.length) return;
+
+        var pgDiv = document.createElement("div");
+        pgDiv.className = "pmo-mega-group";
+
+        var pgTitle = document.createElement("div");
+        pgTitle.className = "pmo-mega-group-title";
+        pgTitle.textContent = pg || "Other";
+        pgDiv.appendChild(pgTitle);
+
+        var byKA = groupBy(pgItems, function (i) { return i.KnowledgeArea; });
+
+        Object.keys(byKA).sort().forEach(function (ka) {
+          var kaItems = byKA[ka];
+          if (!kaItems.length) return;
+
+          var kaDiv = document.createElement("div");
+          kaDiv.className = "pmo-mega-area";
+
+          var kaTitle = document.createElement("div");
+          kaTitle.className = "pmo-mega-area-title";
+          kaTitle.textContent = ka || "General";
+          kaDiv.appendChild(kaTitle);
+
+          var ul = document.createElement("ul");
+          ul.className = "pmo-mega-area-items";
+
+          kaItems.forEach(function (t) {
+            var urlVal = getUrlFromField(t.URL);
+            var li = document.createElement("li");
+
+            var a = document.createElement("a");
+            a.href = urlVal;
+            a.textContent = t.Title || urlVal;
+
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+
+          kaDiv.appendChild(ul);
+          pgDiv.appendChild(kaDiv);
+        });
+
+        wrapper.appendChild(pgDiv);
+      });
+
+      panel.appendChild(wrapper);
+      return panel;
+    }
+
+    // ---------------------------
+    // Main nav builder
+    // ---------------------------
+    function buildNav(items) {
+      console.log("PMO MegaMenu v3: item count =", items.length);
+      if (!items.length) {
         navContainer.innerHTML =
-          "<div style='color:red; padding:6px 0; font-size:12px;'>" +
-            "Navigation list '<strong>" + listTitle + "</strong>' returned no items.<br/>" +
-            "Add some rows with Title, URL, and optional SortOrder." +
-          "</div>";
+          "<div style='color:red;padding:6px'>Navigation list '" + listTitle + "' has no items.</div>";
         return;
       }
 
-      // Create nav container
-      var navEl = document.createElement("nav");
-      navEl.className = "pmo-main-nav";
-      // Ensure visible even without external CSS
-      navEl.style.background = "#2F5597";
-      navEl.style.padding = "0 16px";
+      // Separate Templates children vs general top-level items.
+      var topLevel = [];
+      var templatesChildren = [];
 
-      var ulRoot = document.createElement("ul");
-      ulRoot.className = "pmo-main-nav-root";
-      ulRoot.style.listStyle = "none";
-      ulRoot.style.margin = "0";
-      ulRoot.style.padding = "0";
-      ulRoot.style.display = "flex";
-      ulRoot.style.gap = "18px";
+      items.forEach(function (i) {
+        var area = i.NavArea;
 
-      items.forEach(function (item) {
+        if (area === "Templates" && i.Title !== "Templates") {
+          // Anything in Templates area that isn't the main "Templates" row is a child
+          templatesChildren.push(i);
+        } else {
+          // Methodology, Training, Governance, etc. + the main Templates row
+          topLevel.push(i);
+        }
+      });
+
+      if (!topLevel.length) {
+        navContainer.innerHTML =
+          "<div style='color:red;padding:6px'>No top-level items determined. " +
+          "Ensure you have at least a 'Templates' row and a 'Methodology' row.</div>";
+        return;
+      }
+
+      var byArea = groupBy(items, function (i) { return i.NavArea; });
+
+      // Build the nav container
+      var nav = document.createElement("nav");
+      nav.className = "pmo-main-nav";
+      // Make it visible even if external CSS isn't loaded
+      nav.style.background = "#2F5597";
+      nav.style.padding = "0 16px";
+
+      var ul = document.createElement("ul");
+      ul.className = "pmo-main-nav-root";
+      ul.style.listStyle = "none";
+      ul.style.margin = "0";
+      ul.style.padding = "0";
+      ul.style.display = "flex";
+      ul.style.gap = "18px";
+
+      topLevel.forEach(function (top) {
+        var area = top.NavArea;
         var li = document.createElement("li");
 
+        var urlVal = getUrlFromField(top.URL);
+
         var a = document.createElement("a");
-        var urlVal;
-
-        // With odata=nometadata, hyperlink column often comes back as a simple string
-        // If it's something else, log it
-        if (typeof item.URL === "string") {
-          urlVal = item.URL;
-        } else if (item.URL && typeof item.URL === "object") {
-          // Just in case it's an object, try a Url property
-          urlVal = item.URL.Url || item.URL.url || "#";
-        } else {
-          urlVal = "#";
-        }
-
         a.href = urlVal;
-        a.textContent = item.Title || urlVal;
-
-        // Basic styling inline so we can see it even if CSS isn't wired yet
+        a.textContent = top.Title || area;
         a.style.display = "block";
         a.style.padding = "10px 4px";
         a.style.color = "#ffffff";
@@ -108,37 +198,41 @@ function InitPMOMegaMenu() {
         a.style.fontWeight = "500";
 
         li.appendChild(a);
-        ulRoot.appendChild(li);
+
+        // If this is the Templates top-level item, attach the mega panel
+        if (area === "Templates" && templatesChildren.length) {
+          li.className = "pmo-has-mega";
+          li.appendChild(buildTemplatesPanel(templatesChildren));
+        }
+
+        ul.appendChild(li);
       });
 
-      navEl.appendChild(ulRoot);
+      nav.appendChild(ul);
       navContainer.innerHTML = "";
-      navContainer.appendChild(navEl);
+      navContainer.appendChild(nav);
     }
 
-    // Kick off REST call
+    // Fetch items and build nav
     getJSON(requestUrl, function (data) {
-      var items = (data && data.value) ? data.value : [];
+      var items = data && data.value ? data.value : [];
+      console.log("PMO MegaMenu v3: raw items sample =", items[0]);
       buildNav(items);
     }, function (err) {
-      console.error("PMO SimpleNav: error loading list '" + listTitle + "':", err);
+      console.error("PMO MegaMenu v3: error loading list '" + listTitle + "':", err);
       navContainer.innerHTML =
-        "<div style='color:red; padding:6px 0; font-size:12px;'>" +
-          "Error loading navigation from list '<strong>" + listTitle + "</strong>'. " +
-          "Check browser console for details." +
-        "</div>";
+        "<div style='color:red;padding:6px'>Error loading list '" + listTitle + "'.</div>";
     });
 
   } catch (ex) {
-    console.error("PMO SimpleNav: unexpected error in InitPMOMegaMenu", ex);
+    console.error("PMO MegaMenu v3: fatal error", ex);
   }
 }
 
-// Wire into SharePoint's load pipeline (this part was already working)
+// SharePoint load hookup
 if (typeof _spBodyOnLoadFunctionNames !== "undefined") {
   _spBodyOnLoadFunctionNames.push("InitPMOMegaMenu");
 }
-
 if (typeof RegisterModuleInit === "function") {
   RegisterModuleInit(
     "~sitecollection/Style Library/PMO/Navigation/megamenu.js",
