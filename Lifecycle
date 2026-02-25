@@ -730,22 +730,23 @@
             style.type = "text/css";
 
             style.appendChild(doc.createTextNode(
-              ".embedded-article body{" +
-                "margin:0!important;" +
-                "background:#fff!important;" +
-              "}" +
-              ".embedded-article #globalNavBox," +
-              ".embedded-article #s4-ribbonrow," +
-              ".embedded-article #s4-titlerow," +
-              ".embedded-article #DeltaTopNavigation," +
-              ".embedded-article #DeltaPlaceHolderFooter{" +
-                "display:none!important;" +
-              "}" +
-              ".embedded-article #s4-bodyContainer{" +
-                "padding:0px 10px !important;" +
-                "margin:0!important;" +
-              "}"
-            ));
+  ".embedded-article body{" +
+    "margin:0!important;" +
+    "background:#fff!important;" +
+  "}" +
+  ".embedded-article #globalNavBox," +
+  ".embedded-article #s4-ribbonrow," +
+  ".embedded-article #s4-titlerow," +
+  ".embedded-article #DeltaTopNavigation," +   // OOTB top nav
+  ".embedded-article #pmoMegaNav," +           // your custom nav container
+  ".embedded-article .pmo-main-nav{" +         // your custom nav bar element
+    "display:none!important;" +
+  "}" +
+  ".embedded-article #s4-bodyContainer{" +
+    "padding:0px 10px !important;" +
+    "margin:0!important;" +
+  "}"
+));
 
             doc.head.appendChild(style);
           }
