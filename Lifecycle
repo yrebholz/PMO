@@ -576,21 +576,29 @@
     }
 
     function loadPageIntoFrame(stepIndex) {
-      if (!articleFrame) { return; }
+  if (!articleFrame) { return; }
 
-      var pages = (currentMode === "agile") ? agilePages : waterfallPages;
-      var fileName = pages[stepIndex];
-      if (!fileName) { return; }
+  var pages = (currentMode === "agile") ? agilePages : waterfallPages;
+  var fileName = pages[stepIndex];
+  if (!fileName) { return; }
 
-      // Build URL using SharePoint context if available
-      var baseUrl = (window._spPageContextInfo && _spPageContextInfo.webServerRelativeUrl) || "";
-      if (baseUrl && baseUrl.length > 1) {
-        baseUrl = baseUrl.replace(/\/$/, "");
-      }
+  // Use absolute site URL, ignores the /SitePages/html folder location
+  var baseUrl = (window._spPageContextInfo && _spPageContextInfo.webAbsoluteUrl) ||
+                (window.location.origin || "");
+  if (baseUrl) {
+    baseUrl = baseUrl.replace(/\/$/, ""); // trim trailing slash
+  }
 
-      var targetUrl = baseUrl + "/Pages/" + fileName;
-      articleFrame.src = targetUrl;
-    }
+  // Final URL: https://tenant/sites/YourSite/Pages/Waterfall-Initiation.aspx
+  var targetUrl = baseUrl + "/Pages/" + fileName;
+
+  // Optional: log it so you can copy/paste into the browser
+  if (window.console && console.log) {
+    console.log("Loading lifecycle article:", targetUrl);
+  }
+
+  articleFrame.src = targetUrl;
+}
 
     function setActiveStep(stepIndex, shouldLoadPage) {
       currentStepIndex = stepIndex;
