@@ -326,6 +326,29 @@
     background: #ffffff;
   }
 
+/* When the page is loaded inside an iframe */
+.in-iframe .pmo-footer {
+  display: none !important;        /* hide your custom footer */
+}
+
+.in-iframe #globalNavBox {
+  display: none !important;        /* hide global navigation bar */
+}
+
+/* Add some left/right padding for the content when in an iframe */
+.in-iframe .page-wrapper {
+  /* adjust values to taste */
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+/* If SharePoint chrome tweaks affect width, you can also ensure full width: */
+.in-iframe #s4-workspace,
+.in-iframe #s4-bodyContainer {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
   /* Responsive tweaks */
   @media (max-width: 768px) {
     .pmo-visual-header {
@@ -696,4 +719,18 @@
     // Default mode & step
     setMode("waterfall");      // sets mode + stepIndex = 0 + loads Initiation
   })();
+
+  (function () {
+    // true if this page is being rendered inside an <iframe>
+    var inIframe = (window.self !== window.top);
+
+    if (inIframe) {
+      // Add a class to <html> (you could also use document.body)
+      var root = document.documentElement;
+      if (root.className.indexOf("in-iframe") === -1) {
+        root.className += (root.className ? " " : "") + "in-iframe";
+      }
+    }
+  })();
+
 </script>
