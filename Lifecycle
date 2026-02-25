@@ -23,11 +23,9 @@
       padding: 30px;
       box-sizing: border-box;
     }
-    
 
     /* When this page itself is loaded in an iframe or dialog,
-       you can tweak padding and hide global nav via the in-iframe class.
-       (Global nav lives on master pages, so this is defensive for later use.) */
+       you can tweak padding and hide global nav via the in-iframe class. */
     .in-iframe .page-wrapper {
       padding-left: 30px;
       padding-right: 30px;
@@ -36,7 +34,6 @@
     .in-iframe div#globalNavBox {
       display: none !important;
     }
-    
 
     /*=========================================================
        PAGE TITLE & HEADER STRIP
@@ -69,7 +66,6 @@
       box-sizing: border-box;
     }
 
-    /* Header section inside the lifecycle card */
     .pmo-visual-header {
       display: flex;
       justify-content: space-between;
@@ -90,7 +86,6 @@
       color: #555;
     }
 
-    /* Toggle buttons (Waterfall / Agile) */
     .pmo-toggle {
       display: inline-flex;
       border-radius: 6px;
@@ -118,17 +113,16 @@
       color: #fff;
     }
 
-    /* Reset left margin on generic buttons/inputs */
     input[type=button],
     input[type=reset],
     input[type=submit],
     button {
       margin-left: 0;
     }
-    
-	div.article{
-	padding: 0px 10px !important;
-	}
+
+    div.article {
+      padding: 0px 10px !important;
+    }
 
     /* =========================================================
        LIFECYCLE TRACK & NODES
@@ -189,13 +183,11 @@
       font-size: 34px;
     }
 
-    /* Hover: enlarge if NOT already active */
     .pmo-node:not(.active-step):hover .pmo-node-circle {
       transform: scale(1.10);
       box-shadow: 0 4px 12px rgba(0,0,0,0.22);
     }
 
-    /* Selected step: stays large even when not hovering */
     .pmo-node.active-step .pmo-node-circle {
       transform: scale(1.10);
       box-shadow: 0 4px 12px rgba(0,0,0,0.22);
@@ -218,7 +210,6 @@
        COLOR THEMES (WATERFALL vs AGILE)
        ========================================================= */
 
-    /* WATERFALL BACKGROUND & LINE */
     .mode-waterfall .pmo-track-container {
       background: linear-gradient(135deg, #f7f9fc, #eef3fb);
     }
@@ -228,7 +219,6 @@
       opacity: 0.35;
     }
 
-    /* WATERFALL NODES (1–5) */
     .mode-waterfall .waterfall-track .pmo-node:nth-child(1) .pmo-node-circle {
       background: linear-gradient(135deg,#e5f0ff,#b6ceff);
       border-color:#385acb; color:#1f3b8e;
@@ -250,7 +240,6 @@
       border-color:#8052e1; color:#47258e;
     }
 
-    /* AGILE BACKGROUND & LINE (pink/purple) */
     .mode-agile .pmo-track-container {
       background: linear-gradient(135deg,#faf1ff,#f5e4ff);
     }
@@ -260,7 +249,6 @@
       opacity:0.4;
     }
 
-    /* AGILE NODES (1–5) */
     .mode-agile .agile-track .pmo-node:nth-child(1) .pmo-node-circle {
       background:linear-gradient(135deg,#f7e8ff,#e0b8ff);
       border-color:#8e30c8; color:#551075;
@@ -347,7 +335,6 @@
       font-weight: 600;
     }
 
-    /* Waterfall tabs shown by default, Agile tabs hidden unless mode-agile */
     .tabs-waterfall {
       display: flex;
     }
@@ -365,7 +352,7 @@
     }
 
     /* =========================================================
-       EMBEDDED ARTICLE PANEL (IFRAME)
+       EMBEDDED ARTICLE PANEL (IFRAMES, PRELOADED)
        ========================================================= */
 
     .pmo-article-wrapper {
@@ -374,17 +361,17 @@
 
     .pmo-article-frame {
       width: 100%;
-      min-height: 650px; /* adjust as needed */
+      min-height: 650px;
       border: 1px solid #dde2ee;
       border-top: none;
       border-radius: 0 0 8px 8px;
       background: #ffffff;
-      display:none;
+      display: none;  /* hidden by default */
     }
-    
+
     .pmo-article-frame.active-frame {
-	  display:block;
-	}
+      display: block; /* only one visible */
+    }
 
     /* =========================================================
        RESPONSIVE TWEAKS
@@ -567,7 +554,7 @@
 
       <!-- Embedded article area -->
       <div class="pmo-article-wrapper" id="pmoArticleWrapper">
-        <!-- iframes will be created & preloaded by Javascript for faster loading time -->
+        <!-- iframes will be created & preloaded by JavaScript for faster loading -->
       </div>
     </div>
   </div>
@@ -588,7 +575,7 @@
     })();
   </script>
 
-  <!-- Lifecycle toggle + tab + iframe loader -->
+  <!-- Lifecycle toggle + tab + iframe preloader/switcher -->
   <script>
     (function(){
       var wrapper = document.getElementById("pmoVisualMethod");
@@ -597,75 +584,12 @@
       var btnWF = document.getElementById("btnVMWaterfall");
       var btnAg = document.getElementById("btnVMAgile");
       var subtitle = document.getElementById("pmoVisualSubtitle");
-      var articleFrame = document.getElementById("pmoArticleFrame");
-      
-      //Store all preloaded frames here, keyed by "mode-index"
-      var preloadedFrames = {}; // e.g. "waterfall-0", "agile-3"
+      var articleWrapper = document.getElementById("pmoArticleWrapper");
 
-            // Inject CSS into the article page INSIDE the iframe
-      function styleEmbeddedArticle() {
-        if (!articleFrame || !articleFrame.contentWindow) return;
-
-        try {
-          var doc = articleFrame.contentWindow.document;
-          if (!doc) return;
-
-          // Tag the article's <html> so CSS can key off it if needed
-          var html = doc.documentElement;
-          if (html && html.className.indexOf("embedded-article") === -1) {
-            html.className += (html.className ? " " : "") + "embedded-article";
-          }
-
-          // Only inject our style block once
-          var style = doc.getElementById("pmoEmbedStyle");
-          if (!style) {
-            style = doc.createElement("style");
-            style.id = "pmoEmbedStyle";
-            style.type = "text/css";
-
-            style.appendChild(doc.createTextNode(
-              // Make body full-width with side padding
-              ".embedded-article body{" +
-                "margin:0!important;" +
-                "background:#fff!important;" +
-              "}" +
-              // Hide nav + ribbons + footer inside the article page
-              ".embedded-article #globalNavBox," +
-              ".embedded-article #s4-ribbonrow," +
-              ".embedded-article #s4-titlerow," +
-              ".embedded-article #DeltaTopNavigation," +
-              ".embedded-article #DeltaPlaceHolderFooter{" +
-                "display:none!important;" +
-              "}" +
-              // Tighten body container
-              ".embedded-article #s4-bodyContainer{" +
-                "padding:0px 10px !important;" +
-                "margin:0!important;" +
-              "}"
-            ));
-
-            doc.head.appendChild(style);
-          }
-        } catch (e) {
-          // If it ever fails due to cross-domain (shouldn't in SE), just ignore
-          if (window.console && console.warn) {
-            console.warn("Could not style embedded article:", e);
-          }
-        }
-      }
-
-      // Style the article each time it finishes loading in the iframe
-      if (articleFrame) {
-        articleFrame.onload = function () {
-          styleEmbeddedArticle();
-        };
-      }
-
-      var currentMode = "waterfall"; // "waterfall" or "agile"
-      var currentStepIndex = 0;      // 0..4
+      // Store all preloaded frames here, keyed by "mode-index" (e.g. "waterfall-0", "agile-3")
+      var preloadedFrames = {};
 
       // Article Page names in the Pages library
-      // Adjust these names to match your actual pages
       var waterfallPages = [
         "Waterfall-Initiation.aspx",
         "Waterfall-Planning.aspx",
@@ -682,6 +606,55 @@
         "Agile-Retrospective.aspx"
       ];
 
+      var currentMode = "waterfall"; // "waterfall" or "agile"
+      var currentStepIndex = 0;      // 0..4
+
+      // Inject CSS into the article page INSIDE a given iframe
+      function styleEmbeddedArticle(iframe) {
+        if (!iframe || !iframe.contentWindow) return;
+
+        try {
+          var doc = iframe.contentWindow.document;
+          if (!doc) return;
+
+          var html = doc.documentElement;
+          if (html && html.className.indexOf("embedded-article") === -1) {
+            html.className += (html.className ? " " : "") + "embedded-article";
+          }
+
+          var style = doc.getElementById("pmoEmbedStyle");
+          if (!style) {
+            style = doc.createElement("style");
+            style.id = "pmoEmbedStyle";
+            style.type = "text/css";
+
+            style.appendChild(doc.createTextNode(
+              ".embedded-article body{" +
+                "margin:0!important;" +
+                "background:#fff!important;" +
+              "}" +
+              ".embedded-article #globalNavBox," +
+              ".embedded-article #s4-ribbonrow," +
+              ".embedded-article #s4-titlerow," +
+              ".embedded-article #DeltaTopNavigation," +
+              ".embedded-article #DeltaPlaceHolderFooter{" +
+                "display:none!important;" +
+              "}" +
+              ".embedded-article #s4-bodyContainer{" +
+                "padding:0px 10px !important;" +
+                "margin:0!important;" +
+              "}"
+            ));
+
+            doc.head.appendChild(style);
+          }
+        } catch (e) {
+          if (window.console && console.warn) {
+            console.warn("Could not style embedded article:", e);
+          }
+        }
+      }
+
       // Get site base URL from this file's path:
       // e.g. /sites/PMO/SitePages/html/lifecycle.html -> /sites/PMO
       function getSiteBaseUrl() {
@@ -690,37 +663,74 @@
         var path = window.location.pathname || "";
         var idx = path.toLowerCase().indexOf("/sitepages/");
         var sitePath = idx >= 0 ? path.substring(0, idx) : "";
-        // origin + sitePath => full site URL (no trailing slash)
         return (origin.replace(/\/$/, "") + sitePath);
       }
 
-            function loadPageIntoFrame(stepIndex) {
-        if (!articleFrame) { return; }
-
-        var pages = (currentMode === "agile") ? agilePages : waterfallPages;
+      function buildPageUrl(mode, stepIndex) {
+        var pages = (mode === "agile") ? agilePages : waterfallPages;
         var fileName = pages[stepIndex];
-        if (!fileName) { return; }
-
+        if (!fileName) return null;
         var baseUrl = getSiteBaseUrl();
-        // Build URL: https://server/sites/SiteName/Pages/PageName.aspx?IsDlg=1
-        var targetUrl = baseUrl + "/Pages/" + fileName + "?IsDlg=1";
+        return baseUrl + "/Pages/" + fileName + "?IsDlg=1";
+      }
 
-        articleFrame.src = targetUrl;
+      // Preload all the iframes up front
+      function preloadAllFrames() {
+        if (!articleWrapper) return;
 
-        // Just in case, try styling shortly after src change too
-        setTimeout(styleEmbeddedArticle, 1000);
+        var modes = ["waterfall", "agile"];
+
+        modes.forEach(function(mode) {
+          var pages = (mode === "agile") ? agilePages : waterfallPages;
+
+          pages.forEach(function(_, idx) {
+            var url = buildPageUrl(mode, idx);
+            if (!url) return;
+
+            var key = mode + "-" + idx;
+
+            var iframe = document.createElement("iframe");
+            iframe.className = "pmo-article-frame";
+            iframe.title = "Lifecycle Step Details - " + mode + " step " + idx;
+            iframe.setAttribute("data-mode", mode);
+            iframe.setAttribute("data-step-index", idx);
+            iframe.src = url;  // preload
+
+            iframe.onload = function() {
+              styleEmbeddedArticle(iframe);
+            };
+
+            articleWrapper.appendChild(iframe);
+            preloadedFrames[key] = iframe;
+          });
+        });
+      }
+
+      // Show the iframe for the current mode + step, hide all others
+      function showCurrentFrame() {
+        var keyToShow = currentMode + "-" + currentStepIndex;
+
+        for (var key in preloadedFrames) {
+          if (!preloadedFrames.hasOwnProperty(key)) continue;
+          var frame = preloadedFrames[key];
+          if (!frame) continue;
+
+          if (key === keyToShow) {
+            frame.classList.add("active-frame");
+          } else {
+            frame.classList.remove("active-frame");
+          }
+        }
       }
 
       function updateActiveStepClasses() {
         var i;
 
-        // Clear active-step from all nodes
         var allNodes = wrapper.querySelectorAll(".pmo-node");
         for (i = 0; i < allNodes.length; i++) {
           allNodes[i].className = allNodes[i].className.replace(/\s*active-step/g, "");
         }
 
-        // Add active-step to the node in the current track
         var trackSelector = (currentMode === "agile") ? ".agile-track" : ".waterfall-track";
         var track = wrapper.querySelector(trackSelector);
         if (track) {
@@ -730,13 +740,11 @@
           }
         }
 
-        // Clear active from all tabs
         var allTabs = wrapper.querySelectorAll(".pmo-tab");
         for (i = 0; i < allTabs.length; i++) {
           allTabs[i].className = allTabs[i].className.replace(/\s*active\b/, "");
         }
 
-        // Set active on current mode's tabs
         var tabsSelector = (currentMode === "agile") ? ".tabs-agile .pmo-tab"
                                                     : ".tabs-waterfall .pmo-tab";
         var tabs = wrapper.querySelectorAll(tabsSelector);
@@ -745,11 +753,11 @@
         }
       }
 
-      function setActiveStep(stepIndex, shouldLoadPage) {
+      function setActiveStep(stepIndex, shouldShow) {
         currentStepIndex = stepIndex;
         updateActiveStepClasses();
-        if (shouldLoadPage) {
-          loadPageIntoFrame(stepIndex);
+        if (shouldShow) {
+          showCurrentFrame();
         }
       }
 
@@ -758,7 +766,6 @@
         wrapper.className = "pmo-visual-method-wrapper " +
           (currentMode === "agile" ? "mode-agile" : "mode-waterfall");
 
-        // Reset to first step when switching modes
         currentStepIndex = 0;
 
         if(currentMode === "waterfall"){
@@ -780,7 +787,7 @@
         }
 
         updateActiveStepClasses();
-        loadPageIntoFrame(currentStepIndex);
+        showCurrentFrame();
       }
 
       // Toggle buttons
@@ -847,8 +854,9 @@
         }
       }
 
-      // Default mode & step on page load
-      setMode("waterfall");  // sets mode + stepIndex = 0 + loads Initiation
+      // Preload all frames, then default to Waterfall step 0
+      preloadAllFrames();
+      setMode("waterfall");
     })();
   </script>
 </body>
