@@ -30,9 +30,10 @@
     .in-iframe .page-wrapper {
       padding-left: 30px;
       padding-right: 30px;
+     
     }
 
-    .in-iframe #globalNavBox {
+    .in-iframe div#globalNavBox {
       display: none !important;
     }
 
