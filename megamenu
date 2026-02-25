@@ -1,6 +1,163 @@
-// /Style Library/PMO/Navigation/megamenu.js
-// v3 - Uses Title + NavArea, no IsTopLevel needed
+/* ====== MAIN NAV BAR ====== */
 
+.pmo-main-nav {
+  background: #2F5597;
+  padding: 0 16px;
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.pmo-main-nav-root {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.pmo-main-nav-root > li {
+  position: relative;
+}
+
+/* Top-level links */
+.pmo-main-nav-root > li > a {
+  display: block;
+  padding: 10px 4px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pmo-main-nav-root > li > a:hover {
+  text-decoration: underline;
+}
+
+/* Header-style items (no URL) will get cursor: default from JS.
+   If you want a slightly different look, you can target them with a class later. */
+
+/* ====== MEGAMENU TRIGGER INDICATOR (Templates) ====== */
+
+.pmo-main-nav-root > li.pmo-has-mega > a::after {
+  content: " ▾";
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* Optional: emphasize Templates on hover */
+.pmo-main-nav-root > li.pmo-has-mega:hover > a {
+  text-decoration: underline;
+}
+
+/* ====== MEGAMENU PANEL FOR TEMPLATES ====== */
+
+.pmo-main-nav-root > li.pmo-has-mega {
+  position: relative;
+}
+
+.pmo-mega-panel {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 16px 18px 14px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  min-width: 720px;
+  max-width: 1080px;
+  z-index: 1000;
+}
+
+/* Show the mega panel when hovering the Templates item */
+.pmo-main-nav-root > li.pmo-has-mega:hover > .pmo-mega-panel {
+  display: block;
+}
+
+/* Group columns inside mega panel (one per ProcessGroup) */
+.pmo-mega-groups {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 18px;
+}
+
+/* Each Process Group column */
+.pmo-mega-group {
+  min-width: 130px;
+}
+
+/* Process Group title */
+.pmo-mega-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2F5597;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #dde2ee;
+  padding-bottom: 3px;
+}
+
+/* Knowledge Area sections inside each Process Group */
+.pmo-mega-area {
+  margin-bottom: 10px;
+}
+
+.pmo-mega-area-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+/* List of templates inside a Knowledge Area */
+.pmo-mega-area-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pmo-mega-area-items li a {
+  display: block;
+  font-size: 12px;
+  color: #444;
+  text-decoration: none;
+  padding: 2px 0;
+}
+
+.pmo-mega-area-items li a:hover {
+  text-decoration: underline;
+}
+
+/* ====== RESPONSIVE TWEAKS ====== */
+
+@media (max-width: 768px) {
+  .pmo-main-nav-root {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pmo-main-nav-root > li.pmo-has-mega {
+    position: static;
+  }
+
+  .pmo-mega-panel {
+    position: static;
+    box-shadow: none;
+    border-radius: 0;
+    margin-top: 6px;
+    min-width: auto;
+    max-width: none;
+  }
+
+  .pmo-mega-groups {
+    flex-direction: column;
+  }
+}
+
+
+
+
+// v3 - Uses Title + NavArea, no IsTopLevel needed
 function InitPMOMegaMenu() {
   try {
     console.log("PMO MegaMenu v3: Init starting...");
@@ -239,3 +396,4 @@ if (typeof RegisterModuleInit === "function") {
     InitPMOMegaMenu
   );
 }
+
