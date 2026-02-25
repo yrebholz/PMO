@@ -1,4 +1,4 @@
-<!-- PMO Lifecycle Visual + Step Tabs + Embedded Article Panel -->
+<!-- PMO Lifecycle Visual + Step Tabs + Embedded Article Panel (/Pages library) -->
 
 <style>
   /* --- Shared page look from original --- */
@@ -523,13 +523,10 @@
     var subtitle = document.getElementById("pmoVisualSubtitle");
     var articleFrame = document.getElementById("pmoArticleFrame");
 
-    // 🔧 Change this to "SitePages" if your article pages are in the Site Pages library
-    var articleLibraryName = "Pages"; 
-
     var currentMode = "waterfall"; // "waterfall" or "agile"
     var currentStepIndex = 0;      // 0..4
 
-    // Page mappings (Article Pages)
+    // Page mappings (Article Pages in /Pages library)
     var waterfallPages = [
       "Waterfall-Initiation.aspx",
       "Waterfall-Planning.aspx",
@@ -545,17 +542,6 @@
       "Agile-ReviewAcceptance.aspx",
       "Agile-Retrospective.aspx"
     ];
-
-    function getArticleUrl(fileName){
-      // Use webAbsoluteUrl so folders in Site Pages don't affect us
-      var base = (window._spPageContextInfo && _spPageContextInfo.webAbsoluteUrl) ||
-                 (window.location.origin || "");
-
-      if (base) {
-        base = base.replace(/\/$/, ""); // trim trailing slash
-      }
-      return base + "/" + articleLibraryName + "/" + fileName;
-    }
 
     function updateActiveStepClasses() {
       var i;
@@ -596,7 +582,13 @@
       var fileName = pages[stepIndex];
       if (!fileName) { return; }
 
-      var targetUrl = getArticleUrl(fileName);
+      // Build URL using SharePoint context if available
+      var baseUrl = (window._spPageContextInfo && _spPageContextInfo.webServerRelativeUrl) || "";
+      if (baseUrl && baseUrl.length > 1) {
+        baseUrl = baseUrl.replace(/\/$/, "");
+      }
+
+      var targetUrl = baseUrl + "/Pages/" + fileName;
       articleFrame.src = targetUrl;
     }
 
@@ -694,6 +686,6 @@
     }
 
     // Default mode & step
-    setMode("waterfall");  // sets mode + stepIndex = 0 + loads Initiation
+    setMode("waterfall");      // sets mode + stepIndex = 0 + loads Initiation
   })();
 </script>
