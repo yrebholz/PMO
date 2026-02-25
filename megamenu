@@ -1,0 +1,333 @@
+<style>
+  /* Top nav bar */
+  .pmo-main-nav {
+    background: #2F5597;
+    padding: 0 16px;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .pmo-main-nav-root {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 18px;
+  }
+
+  .pmo-main-nav-root > li {
+    position: relative;
+  }
+
+  .pmo-main-nav-root > li > a {
+    display: block;
+    padding: 10px 4px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .pmo-main-nav-root > li > a:hover {
+    text-decoration: underline;
+  }
+
+  /* Simple dropdown panel (if you want later for Training, Governance, etc.) */
+  .pmo-dropdown-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 8px 12px;
+    z-index: 50;
+  }
+
+  .pmo-dropdown-panel a {
+    display: block;
+    padding: 4px 0;
+    font-size: 13px;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .pmo-dropdown-panel a:hover {
+    text-decoration: underline;
+  }
+
+  .pmo-main-nav-root > li:hover > .pmo-dropdown-panel {
+    display: block;
+  }
+
+  /* Mega menu for Templates */
+  .pmo-main-nav-root > li.pmo-has-mega:hover > .pmo-mega-panel {
+    display: block;
+  }
+
+  .pmo-mega-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding: 16px 18px 14px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    z-index: 60;
+    min-width: 720px;
+    max-width: 1080px;
+  }
+
+  /* One column per Process Group */
+  .pmo-mega-groups {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 18px;
+  }
+
+  .pmo-mega-group {
+    min-width: 130px;
+  }
+
+  .pmo-mega-group-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2F5597;
+    margin-bottom: 6px;
+    border-bottom: 1px solid #dde2ee;
+    padding-bottom: 3px;
+  }
+
+  /* Inside each Process Group, group by Knowledge Area */
+  .pmo-mega-area {
+    margin-bottom: 10px;
+  }
+
+  .pmo-mega-area-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+  }
+
+  .pmo-mega-area-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pmo-mega-area-items li a {
+    display: block;
+    font-size: 12px;
+    color: #444;
+    text-decoration: none;
+    padding: 2px 0;
+  }
+
+  .pmo-mega-area-items li a:hover {
+    text-decoration: underline;
+  }
+
+  /* Responsive tweak: stack mega menu */
+  @media (max-width: 768px) {
+    .pmo-main-nav-root {
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pmo-mega-panel {
+      position: static;
+      box-shadow: none;
+      border-radius: 0;
+      margin-top: 6px;
+      min-width: auto;
+      max-width: none;
+    }
+
+    .pmo-mega-groups {
+      flex-direction: column;
+    }
+
+    .pmo-main-nav-root > li.pmo-has-mega:hover > .pmo-mega-panel {
+      display: block;
+    }
+  }
+</style>
+
+
+<script type="text/javascript">
+(function() {
+  var navContainer = document.getElementById("pmoMegaNav");
+  if (!navContainer || typeof _spPageContextInfo === "undefined") {
+    return;
+  }
+
+  var siteUrl = _spPageContextInfo.webAbsoluteUrl;
+  var listTitle = "PMONavigation";
+
+  var requestUrl = siteUrl +
+    "/_api/web/lists/getbytitle('" + encodeURIComponent(listTitle) + "')/items" +
+    "?$select=Id,Title,Url,NavArea,IsTopLevel,ProcessGroup,KnowledgeArea,SortOrder" +
+    "&$orderby=SortOrder,Title";
+
+  function getJSON(url, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.setRequestHeader("Accept", "application/json;odata=nometadata");
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          onSuccess(data);
+        } catch (e) {
+          if (onError) onError(e);
+        }
+      } else {
+        if (onError) onError(xhr.statusText || ("HTTP " + xhr.status));
+      }
+    };
+    xhr.send();
+  }
+
+  function groupBy(arr, keySelector) {
+    var map = {};
+    (arr || []).forEach(function(item) {
+      var key = keySelector(item) || "";
+      if (!map[key]) map[key] = [];
+      map[key].push(item);
+    });
+    return map;
+  }
+
+  function buildNav(items) {
+    var topLevelItems = items.filter(function(it) {
+      return it.IsTopLevel === true || it.IsTopLevel === "true";
+    });
+
+    var byArea = groupBy(items, function(it) { return it.NavArea; });
+
+    var navEl = document.createElement("nav");
+    navEl.className = "pmo-main-nav";
+
+    var ulRoot = document.createElement("ul");
+    ulRoot.className = "pmo-main-nav-root";
+
+    topLevelItems.forEach(function(top) {
+      var area = top.NavArea;
+      var li = document.createElement("li");
+
+      // Determine if this area should have a mega menu
+      var hasMega = (area === "Templates");
+      if (hasMega) {
+        li.className = "pmo-has-mega";
+      }
+
+      var aTop = document.createElement("a");
+      aTop.href = (top.Url && top.Url.Url) ? top.Url.Url : (top.Url || "#");
+      aTop.textContent = top.Title || area;
+      li.appendChild(aTop);
+
+      // If this is Templates, build the big mega menu
+      if (hasMega) {
+        var childItems = (byArea[area] || []).filter(function(it) {
+          return !(it.IsTopLevel === true || it.IsTopLevel === "true");
+        });
+
+        if (childItems.length > 0) {
+          var megaPanel = buildTemplatesMegaPanel(childItems);
+          li.appendChild(megaPanel);
+        }
+      }
+
+      // For other areas, we can either leave them as simple links
+      // or eventually build a smaller dropdown using the children.
+      // Right now, we'll just leave them as direct links.
+      // If you later add non-top-level items for Training, Governance, etc.,
+      // you can add a dropdown panel here similar to the mega one,
+      // but simpler.
+
+      ulRoot.appendChild(li);
+    });
+
+    navEl.appendChild(ulRoot);
+    navContainer.innerHTML = "";
+    navContainer.appendChild(navEl);
+  }
+
+  function buildTemplatesMegaPanel(childItems) {
+    // Group Templates items by ProcessGroup, then KnowledgeArea
+    var byProcessGroup = groupBy(childItems, function(it) { return it.ProcessGroup; });
+
+    var panel = document.createElement("div");
+    panel.className = "pmo-mega-panel";
+
+    var groupsWrapper = document.createElement("div");
+    groupsWrapper.className = "pmo-mega-groups";
+
+    Object.keys(byProcessGroup).sort().forEach(function(pg) {
+      var pgItems = byProcessGroup[pg] || [];
+      if (!pgItems.length) return;
+
+      var groupDiv = document.createElement("div");
+      groupDiv.className = "pmo-mega-group";
+
+      var pgTitle = document.createElement("div");
+      pgTitle.className = "pmo-mega-group-title";
+      pgTitle.textContent = pg || "Other";
+      groupDiv.appendChild(pgTitle);
+
+      // Within this Process Group, group by KnowledgeArea
+      var byArea = groupBy(pgItems, function(it) { return it.KnowledgeArea; });
+
+      Object.keys(byArea).sort().forEach(function(ka) {
+        var kaItems = byArea[ka] || [];
+        if (!kaItems.length) return;
+
+        var areaDiv = document.createElement("div");
+        areaDiv.className = "pmo-mega-area";
+
+        var kaTitle = document.createElement("div");
+        kaTitle.className = "pmo-mega-area-title";
+        kaTitle.textContent = ka || "General";
+        areaDiv.appendChild(kaTitle);
+
+        var ul = document.createElement("ul");
+        ul.className = "pmo-mega-area-items";
+
+        kaItems.forEach(function(it) {
+          var li = document.createElement("li");
+          var a = document.createElement("a");
+          var urlVal = (it.Url && it.Url.Url) ? it.Url.Url : (it.Url || "#");
+          a.href = urlVal;
+          a.textContent = it.Title || urlVal;
+          li.appendChild(a);
+          ul.appendChild(li);
+        });
+
+        areaDiv.appendChild(ul);
+        groupDiv.appendChild(areaDiv);
+      });
+
+      groupsWrapper.appendChild(groupDiv);
+    });
+
+    panel.appendChild(groupsWrapper);
+    return panel;
+  }
+
+  // Kick off the REST call
+  getJSON(requestUrl, function(data) {
+    var items = (data && data.value) ? data.value : [];
+    buildNav(items);
+  }, function(err) {
+    if (window.console && console.error) {
+      console.error("Error loading PMONavigation:", err);
+    }
+  });
+
+})();
+</script>
