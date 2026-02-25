@@ -366,6 +366,47 @@
 
     .pmo-article-wrapper {
       margin-top: 0;
+      position: relative;
+    }
+
+    /* Loading bar */
+    .pmo-loading {
+      padding: 16px 10px;
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .pmo-loading-text {
+      margin-bottom: 8px;
+    }
+
+    .pmo-loading-bar {
+      position: relative;
+      width: 100%;
+      max-width: 260px;
+      height: 6px;
+      margin: 0 auto;
+      border-radius: 999px;
+      background: #e3e7f0;
+      overflow: hidden;
+    }
+
+    .pmo-loading-bar-fill {
+      position: absolute;
+      top: 0;
+      left: -40%;
+      width: 40%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2F5597, #2ea0e6);
+      animation: pmoLoadingSlide 1.1s infinite ease-in-out;
+    }
+
+    @keyframes pmoLoadingSlide {
+      0%   { left: -40%; }
+      50%  { left: 60%; }
+      100% { left: 100%; }
     }
 
     .pmo-article-frame {
@@ -376,7 +417,7 @@
       border-radius: 0 0 8px 8px;
       background: #ffffff;
       display: none;  /* hidden by default */
-      overflow: hidden; /* NEW: avoid inner scrollbar when we resize height */
+      overflow: hidden; /* avoid inner scrollbar when we resize height */
     }
 
     .pmo-article-frame.active-frame {
@@ -564,6 +605,13 @@
 
       <!-- Embedded article area -->
       <div class="pmo-article-wrapper" id="pmoArticleWrapper">
+        <!-- Loading bar -->
+        <div id="pmoLoading" class="pmo-loading">
+          <div class="pmo-loading-text">Loading lifecycle content…</div>
+          <div class="pmo-loading-bar">
+            <div class="pmo-loading-bar-fill"></div>
+          </div>
+        </div>
         <!-- iframes will be created & preloaded by JavaScript for faster loading -->
       </div>
     </div>
@@ -595,6 +643,14 @@
       var btnAg = document.getElementById("btnVMAgile");
       var subtitle = document.getElementById("pmoVisualSubtitle");
       var articleWrapper = document.getElementById("pmoArticleWrapper");
+      var loadingEl = document.getElementById("pmoLoading");
+
+      function showLoading() {
+        if (loadingEl) loadingEl.style.display = "block";
+      }
+      function hideLoading() {
+        if (loadingEl) loadingEl.style.display = "none";
+      }
 
       // Store all preloaded frames here, keyed by "mode-index" (e.g. "waterfall-0", "agile-3")
       var preloadedFrames = {};
@@ -619,7 +675,7 @@
       var currentMode = "waterfall"; // "waterfall" or "agile"
       var currentStepIndex = 0;      // 0..4
 
-      // --- NEW: resize iframe height to fit its content (respecting CSS min-height) ---
+      // Resize iframe height to fit its content (respecting CSS min-height)
       function resizeIframeToContent(iframe) {
         if (!iframe || !iframe.contentWindow) return;
 
@@ -652,7 +708,6 @@
           }
         }
       }
-      // --- END NEW ---
 
       // Inject CSS into the article page INSIDE a given iframe
       function styleEmbeddedArticle(iframe) {
@@ -723,6 +778,8 @@
       function preloadAllFrames() {
         if (!articleWrapper) return;
 
+        showLoading(); // show loader while we start preloading
+
         var modes = ["waterfall", "agile"];
 
         modes.forEach(function(mode) {
@@ -739,15 +796,24 @@
             iframe.title = "Lifecycle Step Details - " + mode + " step " + idx;
             iframe.setAttribute("data-mode", mode);
             iframe.setAttribute("data-step-index", idx);
+            iframe.setAttribute("data-loaded", "false");
             iframe.src = url;  // preload
 
             iframe.onload = function() {
+              iframe.setAttribute("data-loaded", "true");
               styleEmbeddedArticle(iframe);
-              // NEW: resize once the content has loaded
+              // resize once the content has loaded
               resizeIframeToContent(iframe);
               // Optional: recheck shortly after for late-loading content
               setTimeout(function(){ resizeIframeToContent(iframe); }, 250);
               setTimeout(function(){ resizeIframeToContent(iframe); }, 1000);
+
+              // If this iframe is the currently active one, stop showing loader
+              var modeAttr = iframe.getAttribute("data-mode");
+              var stepAttr = parseInt(iframe.getAttribute("data-step-index"), 10) || 0;
+              if (modeAttr === currentMode && stepAttr === currentStepIndex) {
+                hideLoading();
+              }
             };
 
             articleWrapper.appendChild(iframe);
@@ -759,6 +825,17 @@
       // Show the iframe for the current mode + step, hide all others
       function showCurrentFrame() {
         var keyToShow = currentMode + "-" + currentStepIndex;
+        var frameToShow = preloadedFrames[keyToShow] || null;
+
+        // Decide whether we need to show the loader
+        if (frameToShow) {
+          var isLoaded = frameToShow.getAttribute("data-loaded") === "true";
+          if (!isLoaded) {
+            showLoading();
+          } else {
+            hideLoading();
+          }
+        }
 
         for (var key in preloadedFrames) {
           if (!preloadedFrames.hasOwnProperty(key)) continue;
@@ -767,7 +844,7 @@
 
           if (key === keyToShow) {
             frame.classList.add("active-frame");
-            // NEW: ensure height is correct when we switch
+            // Ensure height is correct when we switch
             resizeIframeToContent(frame);
           } else {
             frame.classList.remove("active-frame");
