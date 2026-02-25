@@ -361,78 +361,32 @@
     }
 
     /* =========================================================
-       EMBEDDED ARTICLE PANEL (IFRAMES, PRELOADED)
+       EMBEDDED ARTICLE PANEL (IFRAMES + INLINE LOADING BAR)
        ========================================================= */
 
     .pmo-article-wrapper {
       margin-top: 0;
-      position: relative; /* so overlay positions relative to this */
+      position: relative;
     }
 
-    .pmo-article-frame {
-      width: 100%;
-      min-height: 650px;
-      border: 1px solid #dde2ee;
-      border-top: none;
-      border-radius: 0 0 8px 8px;
-      background: #ffffff;
-      display: none;  /* hidden by default */
-      overflow: hidden; /* avoid inner scrollbar when we resize height */
+    .pmo-loading {
+      display: none; /* shown via JS */
+      padding: 16px 10px;
+      text-align: center;
+      font-size: 13px;
+      color: #555;
     }
 
-    .pmo-article-frame.active-frame {
-      display: block; /* only one visible */
-    }
-
-    /* =========================================================
-       LOADING OVERLAY (SHADOW BOX)
-       ========================================================= */
-
-    .pmo-loading-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.22);
-      display: none;       /* shown via JS */
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-    }
-
-    .pmo-loading-panel {
-      background: #ffffff;
-      padding: 18px 22px 16px;
-      border-radius: 10px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-      max-width: 360px;
-      width: 90%;
-      box-sizing: border-box;
-      text-align: left;
-      border: 1px solid #dde2ee;
-    }
-
-    .pmo-loading-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2F5597;
-      margin-bottom: 6px;
-    }
-
-    .pmo-loading-subtitle {
-      font-size: 12px;
-      color: #444;
-      margin-bottom: 12px;
-    }
-
-    .pmo-loading-countdown {
-      font-weight: 600;
-      color: #2F5597;
-      margin-left: 4px;
+    .pmo-loading-text {
+      margin-bottom: 8px;
     }
 
     .pmo-loading-bar {
       position: relative;
       width: 100%;
+      max-width: 260px;
       height: 6px;
+      margin: 0 auto;
       border-radius: 999px;
       background: #e3e7f0;
       overflow: hidden;
@@ -453,6 +407,21 @@
       0%   { left: -40%; }
       50%  { left: 60%; }
       100% { left: 100%; }
+    }
+
+    .pmo-article-frame {
+      width: 100%;
+      min-height: 650px;
+      border: 1px solid #dde2ee;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      background: #ffffff;
+      display: none;  /* hidden by default */
+      overflow: hidden; /* avoid inner scrollbar when we resize height */
+    }
+
+    .pmo-article-frame.active-frame {
+      display: block; /* only one visible */
     }
 
     /* =========================================================
@@ -636,20 +605,13 @@
 
       <!-- Embedded article area -->
       <div class="pmo-article-wrapper" id="pmoArticleWrapper">
-        <!-- Shadow-box loading overlay -->
-        <div id="pmoLoadingOverlay" class="pmo-loading-overlay">
-          <div class="pmo-loading-panel">
-            <div class="pmo-loading-title">Preparing lifecycle content…</div>
-            <div class="pmo-loading-subtitle">
-              This will only take a moment.
-              <span id="pmoLoadingCountdown" class="pmo-loading-countdown"></span>
-            </div>
-            <div class="pmo-loading-bar">
-              <div class="pmo-loading-bar-fill"></div>
-            </div>
+        <!-- Inline loading bar -->
+        <div id="pmoLoading" class="pmo-loading">
+          <div class="pmo-loading-text">Loading lifecycle content…</div>
+          <div class="pmo-loading-bar">
+            <div class="pmo-loading-bar-fill"></div>
           </div>
         </div>
-
         <!-- iframes will be created by JavaScript (lazy + background preload) -->
       </div>
     </div>
@@ -681,51 +643,13 @@
       var btnAg = document.getElementById("btnVMAgile");
       var subtitle = document.getElementById("pmoVisualSubtitle");
       var articleWrapper = document.getElementById("pmoArticleWrapper");
-
-      var loadingOverlay = document.getElementById("pmoLoadingOverlay");
-      var countdownEl = document.getElementById("pmoLoadingCountdown");
-      var countdownTimer = null;
-
-      function startCountdown(seconds) {
-        if (!countdownEl) return;
-        var remaining = seconds;
-        countdownEl.textContent = remaining + "…";
-
-        if (countdownTimer) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-        }
-
-        countdownTimer = setInterval(function() {
-          remaining--;
-          if (remaining > 0) {
-            countdownEl.textContent = remaining + "…";
-          } else {
-            countdownEl.textContent = "";
-            clearInterval(countdownTimer);
-            countdownTimer = null;
-          }
-        }, 1000);
-      }
+      var loadingEl = document.getElementById("pmoLoading");
 
       function showLoading() {
-        if (loadingOverlay) {
-          loadingOverlay.style.display = "flex";
-        }
-        startCountdown(3); // simple 3…2…1… countdown
+        if (loadingEl) loadingEl.style.display = "block";
       }
-
       function hideLoading() {
-        if (loadingOverlay) {
-          loadingOverlay.style.display = "none";
-        }
-        if (countdownTimer) {
-          clearInterval(countdownTimer);
-          countdownTimer = null;
-        }
-        if (countdownEl) {
-          countdownEl.textContent = "";
-        }
+        if (loadingEl) loadingEl.style.display = "none";
       }
 
       // Store all frames here, keyed by "mode-index" (e.g. "waterfall-0", "agile-3")
@@ -1028,7 +952,7 @@
       }
       if (btnAg) {
         btnAg.onclick = function(e){
-          if(e && e.preventDefault) e.preventDefault();
+          if (e && e.preventDefault) e.preventDefault();
           setMode("agile");
         };
       }
