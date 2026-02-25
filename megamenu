@@ -2,8 +2,8 @@
 
 .pmo-main-nav {
   background: #2F5597;
-  padding: 0 16px;
-  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  padding: 4px 24px; /* taller bar */
+  font-family: "Segoe UI Light", "Segoe UI", "Segoe", Tahoma, sans-serif;
 }
 
 .pmo-main-nav-root {
@@ -11,7 +11,7 @@
   margin: 0;
   padding: 0;
   display: flex;
-  gap: 18px;
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -22,20 +22,39 @@
 /* Top-level links */
 .pmo-main-nav-root > li > a {
   display: block;
-  padding: 10px 4px;
+  padding: 14px 10px;               /* taller clickable area */
   color: #ffffff;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;                  /* larger font */
+  font-weight: 400;
   white-space: nowrap;
+  font-family: "Segoe UI Light", "Segoe UI", "Segoe", Tahoma, sans-serif;
 }
 
 .pmo-main-nav-root > li > a:hover {
   text-decoration: underline;
 }
 
-/* Header-style items (no URL) will get cursor: default from JS.
-   If you want a slightly different look, you can target them with a class later. */
+/* Active/current page indicator */
+.pmo-main-nav-root > li.pmo-active > a {
+  background: #23407a;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.pmo-main-nav-root > li.pmo-active > a:hover {
+  text-decoration: underline;
+}
+
+/* If a top-level item has an active child (e.g. Templates child),
+   we highlight the parent as well. */
+.pmo-main-nav-root > li.pmo-active-parent > a {
+  background: #23407a;
+  border-radius: 4px;
+}
+
+/* Header-style items (no URL) may appear slightly dimmer;
+   JS sets opacity + cursor for them. */
 
 /* ====== MEGAMENU TRIGGER INDICATOR (Templates) ====== */
 
@@ -68,6 +87,7 @@
   min-width: 720px;
   max-width: 1080px;
   z-index: 1000;
+  font-family: "Segoe UI", Tahoma, sans-serif;
 }
 
 /* Show the mega panel when hovering the Templates item */
@@ -84,7 +104,7 @@
 
 /* Each Process Group column */
 .pmo-mega-group {
-  min-width: 130px;
+  min-width: 140px;
 }
 
 /* Process Group title */
@@ -128,6 +148,12 @@
   text-decoration: underline;
 }
 
+/* Highlight an active leaf link inside the mega menu (same page) */
+.pmo-mega-area-items li.pmo-active-leaf > a {
+  font-weight: 600;
+  color: #2F5597;
+}
+
 /* ====== RESPONSIVE TWEAKS ====== */
 
 @media (max-width: 768px) {
@@ -156,32 +182,36 @@
 
 
 
+// /Style Library/PMO/Navigation/megamenu.js
+// Navigation + Templates megamenu driven by "Navigation" list
+// Now with active/current-page highlighting.
 
-// v3 - Uses Title + NavArea, no IsTopLevel needed
 function InitPMOMegaMenu() {
   try {
-    console.log("PMO MegaMenu v3: Init starting...");
+    console.log("PMO MegaMenu: Init starting...");
 
     var navContainer = document.getElementById("pmoMegaNav");
     if (!navContainer) {
-      console.warn("PMO MegaMenu v3: #pmoMegaNav not found on page.");
+      console.warn("PMO MegaMenu: #pmoMegaNav not found on page.");
       return;
     }
 
-    // Site URL
+    // Determine site URL (works with/without _spPageContextInfo)
     var siteUrl = (typeof _spPageContextInfo !== "undefined" && _spPageContextInfo.webAbsoluteUrl)
       ? _spPageContextInfo.webAbsoluteUrl
       : window.location.origin + window.location.pathname.replace(/\/Pages\/.*/i, "");
 
     var listTitle = "Navigation";
 
-    // NOTE: "URL" must match the internal name of your hyperlink column
+    // NOTE: "URL" must match the *internal* name of your hyperlink column
     var requestUrl = siteUrl +
       "/_api/web/lists/getbytitle('" + listTitle + "')/items" +
-      "?$select=Id,Title,URL,NavArea,ProcessGroup,KnowledgeArea,SortOrder" +
+      "?$select=Id,Title,URL,NavArea,IsTopLevel,ProcessGroup,KnowledgeArea,SortOrder" +
       "&$orderby=SortOrder,Title";
 
-    console.log("PMO MegaMenu v3: REST URL =", requestUrl);
+    console.log("PMO MegaMenu: REST URL =", requestUrl);
+
+    // ---------- Helpers ----------
 
     function getJSON(url, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
@@ -194,12 +224,12 @@ function InitPMOMegaMenu() {
             var data = JSON.parse(xhr.responseText);
             onSuccess(data);
           } catch (e) {
-            console.error("PMO MegaMenu v3: JSON parse error", e);
+            console.error("PMO MegaMenu: JSON parse error", e);
             if (onError) onError(e);
           }
         } else {
-          console.error("PMO MegaMenu v3: HTTP", xhr.status, xhr.statusText);
-          if (onError) onError(xhr.statusText);
+          console.error("PMO MegaMenu: HTTP", xhr.status, xhr.statusText);
+          if (onError) onError(xhr.statusText || ("HTTP " + xhr.status));
         }
       };
       xhr.send();
@@ -215,17 +245,87 @@ function InitPMOMegaMenu() {
       return map;
     }
 
+    function isTrue(val) {
+      return val === true || val === "true" || val === 1 || val === "1";
+    }
+
     function getUrlFromField(field) {
-      if (!field) return "#";
+      if (!field) return "";
       if (typeof field === "string") return field;
       if (field.Url) return field.Url;
       if (field.url) return field.url;
-      return "#";
+      return "";
     }
 
-    // ---------------------------
-    // Templates mega-menu builder
-    // ---------------------------
+    // Matches helper (for closest polyfill)
+    function matches(el, selector) {
+      if (!el || el.nodeType !== 1) return false;
+      var p = Element.prototype;
+      var f = p.matches || p.msMatchesSelector || p.webkitMatchesSelector || p.mozMatchesSelector;
+      return f ? f.call(el, selector) : false;
+    }
+
+    function closest(el, selector) {
+      while (el && el.nodeType === 1) {
+        if (matches(el, selector)) return el;
+        el = el.parentNode;
+      }
+      return null;
+    }
+
+    // ---------- Active-state logic ----------
+
+    function markActive(navRoot) {
+      try {
+        var current = window.location.href.toLowerCase().split("#")[0];
+
+        var links = navRoot.querySelectorAll("a[href]");
+        var bestLink = null;
+        var bestLength = 0;
+
+        for (var i = 0; i < links.length; i++) {
+          var a = links[i];
+          var href = (a.href || "").toLowerCase().split("#")[0];
+
+          if (!href ||
+              href === "javascript:void(0)" ||
+              href === "javascript:void(0);") {
+            continue;
+          }
+
+          // Simple prefix match: current URL starts with link URL
+          if (current.indexOf(href) === 0 && href.length > bestLength) {
+            bestLength = href.length;
+            bestLink = a;
+          }
+        }
+
+        if (!bestLink) {
+          console.log("PMO MegaMenu: no active link match found.");
+          return;
+        }
+
+        // Mark the direct LI as active
+        var li = closest(bestLink, "li");
+        if (li) {
+          li.classList.add("pmo-active");
+          if (closest(li, ".pmo-mega-panel")) {
+            // This is a child in the mega menu; mark parent top-level
+            var parentMega = closest(li, "li.pmo-has-mega");
+            if (parentMega) {
+              parentMega.classList.add("pmo-active-parent");
+            }
+            // Also mark the leaf itself
+            li.classList.add("pmo-active-leaf");
+          }
+        }
+      } catch (e) {
+        console.warn("PMO MegaMenu: markActive error", e);
+      }
+    }
+
+    // ---------- Templates mega-menu builder ----------
+
     function buildTemplatesPanel(children) {
       var byProcess = groupBy(children, function (i) { return i.ProcessGroup; });
 
@@ -237,7 +337,7 @@ function InitPMOMegaMenu() {
 
       Object.keys(byProcess).sort().forEach(function (pg) {
         var pgItems = byProcess[pg];
-        if (!pgItems.length) return;
+        if (!pgItems || !pgItems.length) return;
 
         var pgDiv = document.createElement("div");
         pgDiv.className = "pmo-mega-group";
@@ -251,7 +351,7 @@ function InitPMOMegaMenu() {
 
         Object.keys(byKA).sort().forEach(function (ka) {
           var kaItems = byKA[ka];
-          if (!kaItems.length) return;
+          if (!kaItems || !kaItems.length) return;
 
           var kaDiv = document.createElement("div");
           kaDiv.className = "pmo-mega-area";
@@ -265,13 +365,12 @@ function InitPMOMegaMenu() {
           ul.className = "pmo-mega-area-items";
 
           kaItems.forEach(function (t) {
-            var urlVal = getUrlFromField(t.URL);
-            var li = document.createElement("li");
+            var urlVal = getUrlFromField(t.URL) || "#";
 
+            var li = document.createElement("li");
             var a = document.createElement("a");
             a.href = urlVal;
             a.textContent = t.Title || urlVal;
-
             li.appendChild(a);
             ul.appendChild(li);
           });
@@ -287,78 +386,73 @@ function InitPMOMegaMenu() {
       return panel;
     }
 
-    // ---------------------------
-    // Main nav builder
-    // ---------------------------
+    // ---------- Main nav builder ----------
+
     function buildNav(items) {
-      console.log("PMO MegaMenu v3: item count =", items.length);
-      if (!items.length) {
+      console.log("PMO MegaMenu: item count =", items.length);
+      if (!items || !items.length) {
         navContainer.innerHTML =
           "<div style='color:red;padding:6px'>Navigation list '" + listTitle + "' has no items.</div>";
         return;
       }
 
-      // Separate Templates children vs general top-level items.
-      var topLevel = [];
-      var templatesChildren = [];
-
-      items.forEach(function (i) {
-        var area = i.NavArea;
-
-        if (area === "Templates" && i.Title !== "Templates") {
-          // Anything in Templates area that isn't the main "Templates" row is a child
-          templatesChildren.push(i);
-        } else {
-          // Methodology, Training, Governance, etc. + the main Templates row
-          topLevel.push(i);
-        }
-      });
+      // Top-level items are those with IsTopLevel = Yes
+      var topLevel = items.filter(function (i) { return isTrue(i.IsTopLevel); });
 
       if (!topLevel.length) {
         navContainer.innerHTML =
-          "<div style='color:red;padding:6px'>No top-level items determined. " +
-          "Ensure you have at least a 'Templates' row and a 'Methodology' row.</div>";
+          "<div style='color:red;padding:6px'>No items in '" + listTitle + "' have IsTopLevel = Yes.</div>";
         return;
       }
 
-      var byArea = groupBy(items, function (i) { return i.NavArea; });
+      // Templates children: NavArea = "Templates" and not IsTopLevel
+      var templatesChildren = items.filter(function (i) {
+        return i.NavArea === "Templates" && !isTrue(i.IsTopLevel);
+      });
 
-      // Build the nav container
       var nav = document.createElement("nav");
       nav.className = "pmo-main-nav";
-      // Make it visible even if external CSS isn't loaded
-      nav.style.background = "#2F5597";
-      nav.style.padding = "0 16px";
 
       var ul = document.createElement("ul");
       ul.className = "pmo-main-nav-root";
-      ul.style.listStyle = "none";
-      ul.style.margin = "0";
-      ul.style.padding = "0";
-      ul.style.display = "flex";
-      ul.style.gap = "18px";
 
       topLevel.forEach(function (top) {
         var area = top.NavArea;
         var li = document.createElement("li");
 
-        var urlVal = getUrlFromField(top.URL);
+        // Determine if this top-level item has a usable URL
+        var rawUrl = getUrlFromField(top.URL);
+        var hasUrl = rawUrl && rawUrl.trim() !== "";
 
         var a = document.createElement("a");
-        a.href = urlVal;
         a.textContent = top.Title || area;
+
+        // Base styling (CSS also handles this)
         a.style.display = "block";
-        a.style.padding = "10px 4px";
+        a.style.padding = "14px 10px";
         a.style.color = "#ffffff";
         a.style.textDecoration = "none";
-        a.style.fontSize = "14px";
-        a.style.fontWeight = "500";
+        a.style.fontSize = "15px";
+        a.style.fontWeight = "400";
+
+        if (hasUrl) {
+          a.href = rawUrl;
+        } else {
+          // Header-only behavior: no navigation
+          a.href = "javascript:void(0)";
+          a.style.cursor = "default";
+          a.style.opacity = "0.9";
+
+          a.addEventListener("click", function (e) {
+            e.preventDefault();
+          });
+        }
 
         li.appendChild(a);
 
-        // If this is the Templates top-level item, attach the mega panel
+        // Attach mega-menu to Templates if it has children
         if (area === "Templates" && templatesChildren.length) {
-          li.className = "pmo-has-mega";
+          li.classList.add("pmo-has-mega");
           li.appendChild(buildTemplatesPanel(templatesChildren));
         }
 
@@ -368,25 +462,29 @@ function InitPMOMegaMenu() {
       nav.appendChild(ul);
       navContainer.innerHTML = "";
       navContainer.appendChild(nav);
+
+      // After nav is in the DOM, calculate active link
+      markActive(nav);
     }
 
-    // Fetch items and build nav
+    // ---------- Fetch and build ----------
+
     getJSON(requestUrl, function (data) {
       var items = data && data.value ? data.value : [];
-      console.log("PMO MegaMenu v3: raw items sample =", items[0]);
+      console.log("PMO MegaMenu: sample item =", items[0]);
       buildNav(items);
     }, function (err) {
-      console.error("PMO MegaMenu v3: error loading list '" + listTitle + "':", err);
+      console.error("PMO MegaMenu: error loading list '" + listTitle + "':", err);
       navContainer.innerHTML =
-        "<div style='color:red;padding:6px'>Error loading list '" + listTitle + "'.</div>";
+        "<div style='color:red;padding:6px'>Error loading navigation from list '" + listTitle + "'.</div>";
     });
 
   } catch (ex) {
-    console.error("PMO MegaMenu v3: fatal error", ex);
+    console.error("PMO MegaMenu: fatal error", ex);
   }
 }
 
-// SharePoint load hookup
+// SharePoint on-load wiring (classic + MDS)
 if (typeof _spBodyOnLoadFunctionNames !== "undefined") {
   _spBodyOnLoadFunctionNames.push("InitPMOMegaMenu");
 }
@@ -396,4 +494,3 @@ if (typeof RegisterModuleInit === "function") {
     InitPMOMegaMenu
   );
 }
-
