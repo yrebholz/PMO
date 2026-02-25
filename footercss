@@ -1,0 +1,72 @@
+/* ===== PMO Footer styles ===== */
+.pmo-footer {
+  background:#2F5597;
+  color:#fff;
+  font: 14px/1.6 "Segoe UI", Helvetica, Arial, sans-serif;
+  padding: 12px 20px;
+}
+.pmo-footer a { color:#fff; text-decoration:underline; }
+.pmo-footer .pmo-footer-inner {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  max-width:1200px;
+  margin:0 auto;
+}
+.pmo-footer .sep { opacity:.8; padding:0 8px; }
+@media (max-width: 768px){
+  .pmo-footer .pmo-footer-inner { flex-direction:column; align-items:flex-start; }
+}
+
+/* ===== Remove the tiny gap under the footer ===== */
+html, body { margin: 0 !important; }
+
+#s4-workspace,
+#s4-bodyContainer {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Oslo wrappers often add a few pixels at the bottom */
+#ms-belltown-table,
+#contentBox,
+.contentwrapper,
+.ms-pub-contentLayout,
+.ms-tableRow:last-child,
+.ms-tableCell:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Status bar can leave a sliver even when empty */
+#pageStatusBar {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
+}
+
+/* Footer containers: no extra spacing */
+#DeltaPlaceHolderFooter,
+#PlaceHolderPageFooter {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+/* Footer block itself: no external margin */
+.pmo-footer,
+#custom-footer {
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+/* If you use <p> tags inside the footer */
+.pmo-footer p,
+#custom-footer p {
+  margin: 0 !important;
+}
+
+/* Optional: ensure page bg matches footer edge (avoids faint seam) */
+body { background-color: #fff; }
