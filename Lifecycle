@@ -594,6 +594,66 @@
       var subtitle = document.getElementById("pmoVisualSubtitle");
       var articleFrame = document.getElementById("pmoArticleFrame");
 
+            // Inject CSS into the article page INSIDE the iframe
+      function styleEmbeddedArticle() {
+        if (!articleFrame || !articleFrame.contentWindow) return;
+
+        try {
+          var doc = articleFrame.contentWindow.document;
+          if (!doc) return;
+
+          // Tag the article's <html> so CSS can key off it if needed
+          var html = doc.documentElement;
+          if (html && html.className.indexOf("embedded-article") === -1) {
+            html.className += (html.className ? " " : "") + "embedded-article";
+          }
+
+          // Only inject our style block once
+          var style = doc.getElementById("pmoEmbedStyle");
+          if (!style) {
+            style = doc.createElement("style");
+            style.id = "pmoEmbedStyle";
+            style.type = "text/css";
+
+            style.appendChild(doc.createTextNode(
+              // Make body full-width with side padding
+              ".embedded-article body{" +
+                "margin:0!important;" +
+                "padding:0 30px 30px 30px!important;" +
+                "background:#fff!important;" +
+              "}" +
+              // Hide nav + ribbons + footer inside the article page
+              ".embedded-article #globalNavBox," +
+              ".embedded-article #s4-ribbonrow," +
+              ".embedded-article #s4-titlerow," +
+              ".embedded-article #DeltaTopNavigation," +
+              ".embedded-article #DeltaPlaceHolderFooter{" +
+                "display:none!important;" +
+              "}" +
+              // Tighten body container
+              ".embedded-article #s4-bodyContainer{" +
+                "padding:0!important;" +
+                "margin:0!important;" +
+              "}"
+            ));
+
+            doc.head.appendChild(style);
+          }
+        } catch (e) {
+          // If it ever fails due to cross-domain (shouldn't in SE), just ignore
+          if (window.console && console.warn) {
+            console.warn("Could not style embedded article:", e);
+          }
+        }
+      }
+
+      // Style the article each time it finishes loading in the iframe
+      if (articleFrame) {
+        articleFrame.onload = function () {
+          styleEmbeddedArticle();
+        };
+      }
+
       var currentMode = "waterfall"; // "waterfall" or "agile"
       var currentStepIndex = 0;      // 0..4
 
@@ -627,7 +687,7 @@
         return (origin.replace(/\/$/, "") + sitePath);
       }
 
-      function loadPageIntoFrame(stepIndex) {
+            function loadPageIntoFrame(stepIndex) {
         if (!articleFrame) { return; }
 
         var pages = (currentMode === "agile") ? agilePages : waterfallPages;
@@ -639,6 +699,9 @@
         var targetUrl = baseUrl + "/Pages/" + fileName + "?IsDlg=1";
 
         articleFrame.src = targetUrl;
+
+        // Just in case, try styling shortly after src change too
+        setTimeout(styleEmbeddedArticle, 1000);
       }
 
       function updateActiveStepClasses() {
