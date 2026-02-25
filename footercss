@@ -1,11 +1,437 @@
-/* ===== PMO Footer styles ===== */
+/* =========================================================
+   BASE LAYOUT & PAGE WRAPPER
+   ========================================================= */
+
+html, body {
+  margin: 0 !important;
+  height: 100%;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Outer wrapper for the main page content */
+.page-wrapper {
+  width: 100%;
+  max-width: 100%;
+  background: #f9f9f9;
+  padding: 30px;
+  box-sizing: border-box;
+
+  /* Sticky-footer layout */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main content area (everything above the footer) */
+.pmo-content-area {
+  flex: 1 0 auto;
+}
+
+/* =========================================================
+   PAGE TITLE & HEADER STRIP
+   ========================================================= */
+
+h1.page-title {
+  margin: 0 0 8px;
+  color: #000;
+  font-size: 26px;
+}
+
+.custom-hr {
+  border: 0;
+  border-top: 5px solid #0078d4;
+  height: 0;
+  margin: 10px 0 25px;
+}
+
+/* =========================================================
+   LIFECYCLE CARD & TOGGLE
+   ========================================================= */
+
+.pmo-visual-method-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #dde2ee;
+  padding: 22px 24px 26px;
+  box-sizing: border-box;
+}
+
+/* Header section inside the lifecycle card */
+.pmo-visual-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.pmo-visual-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.pmo-visual-subtitle {
+  font-size: 12px;
+  color: #555;
+}
+
+/* Toggle buttons (Waterfall / Agile) */
+.pmo-toggle {
+  display: inline-flex;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #2F528F;
+}
+
+.pmo-toggle button {
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #eef3fb;
+  color: #0b3868;
+  border: none;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.pmo-toggle button:hover:not(.active) {
+  filter: brightness(0.96);
+}
+
+.pmo-toggle button.active {
+  background: #2F5597;
+  color: #fff;
+}
+
+/* =========================================================
+   LIFECYCLE TRACK & NODES
+   ========================================================= */
+
+.pmo-track-container {
+  position: relative;
+  margin-top: 8px;
+  padding: 28px 18px 14px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pmo-track-background-line {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 7px;
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.pmo-track {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 22px;
+  position: relative;
+  z-index: 2;
+}
+
+.pmo-node {
+  flex: 1 1 0;
+  max-width: 233px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.pmo-node-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid transparent;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pmo-node-icon {
+  font-size: 34px;
+}
+
+/* Hover: enlarge if NOT already active */
+.pmo-node:not(.active-step):hover .pmo-node-circle {
+  transform: scale(1.10);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+}
+
+/* Selected step: stays large even when not hovering */
+.pmo-node.active-step .pmo-node-circle {
+  transform: scale(1.10);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+}
+
+.pmo-node-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.pmo-node-subtitle {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   COLOR THEMES (WATERFALL vs AGILE)
+   ========================================================= */
+
+/* WATERFALL BACKGROUND & LINE */
+.mode-waterfall .pmo-track-container {
+  background: linear-gradient(135deg, #f7f9fc, #eef3fb);
+}
+
+.mode-waterfall .pmo-track-background-line {
+  background: linear-gradient(90deg, #5a7bcf, #2f5597);
+  opacity: 0.35;
+}
+
+/* WATERFALL NODES (1–5) */
+.mode-waterfall .waterfall-track .pmo-node:nth-child(1) .pmo-node-circle {
+  background: linear-gradient(135deg,#e5f0ff,#b6ceff);
+  border-color:#385acb; color:#1f3b8e;
+}
+.mode-waterfall .waterfall-track .pmo-node:nth-child(2) .pmo-node-circle {
+  background:linear-gradient(135deg,#e8f3ff,#9fd4ff);
+  border-color:#1f7ed1; color:#105087;
+}
+.mode-waterfall .waterfall-track .pmo-node:nth-child(3) .pmo-node-circle {
+  background:linear-gradient(135deg,#e7f5ff,#96e0ff);
+  border-color:#1695c8; color:#0f5676;
+}
+.mode-waterfall .waterfall-track .pmo-node:nth-child(4) .pmo-node-circle {
+  background:linear-gradient(135deg,#ebf4ff,#c2d2ff);
+  border-color:#4b64d9; color:#27307a;
+}
+.mode-waterfall .waterfall-track .pmo-node:nth-child(5) .pmo-node-circle {
+  background:linear-gradient(135deg,#f3f0ff,#d3c6ff);
+  border-color:#8052e1; color:#47258e;
+}
+
+/* AGILE BACKGROUND & LINE (pink/purple) */
+.mode-agile .pmo-track-container {
+  background: linear-gradient(135deg,#faf1ff,#f5e4ff);
+}
+
+.mode-agile .pmo-track-background-line {
+  background: linear-gradient(90deg,#c25bff,#6a1bb5);
+  opacity:0.4;
+}
+
+/* AGILE NODES (1–5) */
+.mode-agile .agile-track .pmo-node:nth-child(1) .pmo-node-circle {
+  background:linear-gradient(135deg,#f7e8ff,#e0b8ff);
+  border-color:#8e30c8; color:#551075;
+}
+.mode-agile .agile-track .pmo-node:nth-child(2) .pmo-node-circle {
+  background:linear-gradient(135deg,#fbe5ff,#f0a8ff);
+  border-color:#b23acb; color:#6f127c;
+}
+.mode-agile .agile-track .pmo-node:nth-child(3) .pmo-node-circle {
+  background:linear-gradient(135deg,#ffe6fb,#ffb0e5);
+  border-color:#c23aa7; color:#7d155f;
+}
+.mode-agile .agile-track .pmo-node:nth-child(4) .pmo-node-circle {
+  background:linear-gradient(135deg,#ffeaf7,#ffbddf);
+  border-color:#cc4ba7; color:#811d60;
+}
+.mode-agile .agile-track .pmo-node:nth-child(5) .pmo-node-circle {
+  background:linear-gradient(135deg,#fff0f8,#ffd0ef);
+  border-color:#b7328f; color:#741650;
+}
+
+/* =========================================================
+   TRACK VISIBILITY (ONLY ONE AT A TIME)
+   ========================================================= */
+
+.pmo-track.waterfall-track {
+  display: flex;
+}
+
+.pmo-track.agile-track {
+  display: none;
+}
+
+.mode-agile .waterfall-track {
+  display: none;
+}
+
+.mode-agile .agile-track {
+  display: flex;
+}
+
+/* Reset margin-left for button-like inputs (matches your earlier pattern) */
+input[type=button],
+input[type=reset],
+input[type=submit],
+button {
+  margin-left: 0;
+}
+
+/* =========================================================
+   TABS UNDER THE LIFECYCLE
+   ========================================================= */
+
+.pmo-tabs-container {
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px solid #dde2ee;
+}
+
+.pmo-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.pmo-tab {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 8px 6px;
+  font-size: 13px;
+  border-radius: 0;
+  border: 1px solid #dde2ee;
+  border-right: none;
+  background: #eef3fb;
+  color: #0b3868;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pmo-tab:last-child {
+  border-right: 1px solid #dde2ee;
+}
+
+.pmo-tab:hover {
+  filter: brightness(0.96);
+}
+
+.pmo-tab.active {
+  background: #ffffff;
+  border-bottom-color: #ffffff;
+  color: #2F5597;
+  font-weight: 600;
+}
+
+/* Waterfall tabs shown by default, Agile tabs hidden unless mode-agile */
+.tabs-waterfall {
+  display: flex;
+}
+
+.tabs-agile {
+  display: none;
+}
+
+.mode-agile .tabs-waterfall {
+  display: none;
+}
+
+.mode-agile .tabs-agile {
+  display: flex;
+}
+
+/* =========================================================
+   EMBEDDED ARTICLE PANEL (IFRAME)
+   ========================================================= */
+
+.pmo-article-wrapper {
+  margin-top: 0;
+}
+
+.pmo-article-frame {
+  width: 100%;
+  min-height: 650px; /* adjust as needed */
+  border: 1px solid #dde2ee;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  background: #ffffff;
+}
+
+/* =========================================================
+   RESPONSIVE TWEAKS
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .pmo-visual-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pmo-track {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pmo-track-background-line {
+    display: none;
+  }
+
+  .pmo-node {
+    max-width: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    gap: 10px;
+  }
+
+  .pmo-node-circle {
+    margin: 0;
+  }
+
+  .pmo-node-label {
+    font-size: 13px;
+  }
+
+  .pmo-tabs {
+    flex-wrap: wrap;
+  }
+
+  .pmo-tab {
+    flex: 1 1 50%;
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+}
+
+/* =========================================================
+   PMO FOOTER (YOUR EXISTING VISUAL STYLES)
+   ========================================================= */
+
 .pmo-footer {
   background:#2F5597;
   color:#fff;
   font: 14px/1.6 "Segoe UI", Helvetica, Arial, sans-serif;
   padding: 12px 20px;
+
+  /* Sticky-footer layout: keep at bottom, don't shrink */
+  flex-shrink: 0;
 }
-.pmo-footer a { color:#fff; text-decoration:underline; }
+
+.pmo-footer a {
+  color:#fff;
+  text-decoration:underline;
+}
+
 .pmo-footer .pmo-footer-inner {
   display:flex;
   justify-content:space-between;
@@ -14,21 +440,43 @@
   max-width:1200px;
   margin:0 auto;
 }
-.pmo-footer .sep { opacity:.8; padding:0 8px; }
-@media (max-width: 768px){
-  .pmo-footer .pmo-footer-inner { flex-direction:column; align-items:flex-start; }
+
+.pmo-footer .sep {
+  opacity:.8;
+  padding:0 8px;
 }
 
-/* ===== Remove the tiny gap under the footer ===== */
-html, body { margin: 0 !important; }
+@media (max-width: 768px){
+  .pmo-footer .pmo-footer-inner {
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
 
+/* If you also use #custom-footer, keep it visually aligned */
+#custom-footer {
+  margin: 0 !important;
+  border: 0 !important;
+}
+
+/* If you use <p> tags inside the footer */
+.pmo-footer p,
+#custom-footer p {
+  margin: 0 !important;
+}
+
+/* =========================================================
+   SHAREPOINT GAP / SEAM CLEANUP
+   ========================================================= */
+
+/* Remove tiny gaps/margins under footer and around workspace */
 #s4-workspace,
 #s4-bodyContainer {
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
 }
 
-/* Oslo wrappers often add a few pixels at the bottom */
+/* Oslo / SE wrappers that add bottom spacing */
 #ms-belltown-table,
 #contentBox,
 .contentwrapper,
@@ -47,7 +495,7 @@ html, body { margin: 0 !important; }
   height: 0 !important;
 }
 
-/* Footer containers: no extra spacing */
+/* Footer containers: no extra spacing from the master page */
 #DeltaPlaceHolderFooter,
 #PlaceHolderPageFooter {
   margin: 0 !important;
@@ -55,18 +503,7 @@ html, body { margin: 0 !important; }
   border: 0 !important;
 }
 
-/* Footer block itself: no external margin */
-.pmo-footer,
-#custom-footer {
-  margin: 0 !important;
-  border: 0 !important;
-}
-
-/* If you use <p> tags inside the footer */
-.pmo-footer p,
-#custom-footer p {
-  margin: 0 !important;
-}
-
 /* Optional: ensure page bg matches footer edge (avoids faint seam) */
-body { background-color: #fff; }
+body {
+  background-color: #fff;
+}
